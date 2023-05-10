@@ -37,8 +37,10 @@ class Course(db.Model):
     __tablename__ = 'course'
     course_id = db.Column(db.Integer, primary_key=True)
     course_name = db.Column(db.String(100), nullable=False)
-    syllabus = db.Column(db.String(100), nullable=False)
+    syllabus = db.Column(db.String(200), nullable=False)
     university_id = db.Column(db.Integer, db.ForeignKey('university.university_id'), nullable=False)
+    degree = db.Column(db.String(100), nullable=False)
+    cycle = db.Column(db.String(100), nullable=False)
     university = db.relationship('University', backref=db.backref('university', lazy=True))
 
     def __repr__(self):
