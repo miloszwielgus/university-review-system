@@ -3,6 +3,7 @@ from flask_login import login_required,  current_user
 from . import db
 from .models import User,University
 import json
+from flask_cors import cross_origin
 
 views = Blueprint('views',__name__)
 
@@ -27,7 +28,6 @@ def get_dropdown_values():
             lst_c.append( c.university_name )
         myDict[key] = lst_c
     
-    print(myDict['Warszawa'])
     class_entry_relations = myDict
                         
     return class_entry_relations
@@ -45,18 +45,19 @@ def index():
                        all_classes=default_classes,
                        all_entries=default_values,user=current_user)
 
-@views.route('/_update_dropdown',methods=['GET','POST'])
+@views.route('/_update_dropdown')
+@cross_origin()
 def update_dropdown():
-    print('srranie')
     # the value of the first dropdown (selected by the user)
     selected_class = request.args.get('selected_class', type=str)
-
     # get values for the second dropdown
     updated_values = get_dropdown_values()[selected_class]
     # create the valuesn in the dropdown as a html string
     html_string_selected = ''
     for entry in updated_values:
         html_string_selected += '<option value="{}">{}</option>'.format(entry, entry)
+
+    print('html_string_selected:', html_string_selected)
 
     return jsonify(html_string_selected=html_string_selected)
 

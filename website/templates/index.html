@@ -56,22 +56,20 @@
     </div>
   </div>
   <script
-    src="https://code.jquery.com/jquery-3.6.3.js"
-    type="text/javascript"
-  ></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+    ></script>
   <script type="text/javascript">
     $(document).ready(function () {
-      $("#all_classes").change(function () {
-        console.log($("#all_classes").val());
-        $.getJSON("/_update_dropdown", {
+      $("#all_classes").on('change', function () {
+        jQuery.getJSON("{{ url_for('views.update_dropdown') }}", {
           selected_class: $("#all_classes").val(),
         }).done(function (selected_class) {
           $("#all_entries").html(selected_class.html_string_selected);
+        }).fail(function(jqXHR, textStatus, errorThrown) {
         });
       });
       $("#process_input").bind("click", function () {
-        $.getJSON("/_process_data", {
+        jQuery.getJSON("{{ url_for('views.process_data') }}", {
           selected_class: $("#all_classes").val(),
           selected_entry: $("#all_entries").val(),
         }).done(function (data) {
