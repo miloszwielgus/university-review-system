@@ -40,7 +40,7 @@ def sign_up():
         password2 = request.form.get('password2')
 
         user=User.query.filter_by(email=email).first()
-        user2=User.query.filter_by(username=username).fisrt()
+        user2=User.query.filter_by(username=username).first()
         if user:
             flash('Email taken',category='error')
         elif user2:
@@ -60,6 +60,6 @@ def sign_up():
             db.session.commit()
             login_user(new_user,remember=True)
             flash('Account created!',category='success')
-            return redirect(url_for('views.home'))
+            return redirect(url_for('views.index'))
             
     return render_template("sign_up.html",user=current_user)
