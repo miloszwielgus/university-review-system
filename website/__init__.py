@@ -7,7 +7,8 @@ from flask_admin.contrib.sqla import ModelView
 from flask_cors import CORS
 
 db = SQLAlchemy()
-DB_NAME = "unidatabase.db" 
+DB_NAME = "unidatabase.db"
+
 
 def create_app():
     app = Flask(__name__)
@@ -16,8 +17,6 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
     app.config['CORS_HEADERS'] = 'Content-Type'
     db.init_app(app)
-
-   
 
     from .views import views
     from .auth import auth
@@ -33,7 +32,6 @@ def create_app():
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
 
-
     @login_manager.user_loader
     def load_user(id):
         return User.query.get(int(id))
@@ -45,6 +43,7 @@ def create_app():
     admin.add_view(ModelView(Rating,db.session))
 
     return app
+
 
 def create_database(app):
     if not path.exists('website/' + DB_NAME):
