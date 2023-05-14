@@ -32,7 +32,6 @@ def update_university_dropdown():
     selected_city = json.loads(request.args.get('selected_city'))
     # get values for the second dropdown
     html_string_selected = ''
-    print(selected_city)
     for city in selected_city:
        updated_values = get_university_values()[city]
        for entry in updated_values:
@@ -52,7 +51,6 @@ def update_course_dropdown():
     selected_university = json.loads(request.args.get('selected_university'))
     
     html_string_selected = ''
-    print(selected_university)
     # get values for the second dropdown
     for university in selected_university:
         updated_values = get_course_values()[university]
@@ -92,6 +90,5 @@ def update_course_list():
 
     if  (html_string_selected==''):
         flash('Brak kursów!',category = 'error')
-    print("asdf")
     
     return jsonify(html_string_selected=html_string_selected)
