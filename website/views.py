@@ -4,7 +4,7 @@ from . import db
 from .models import User,University,Course
 import json
 from flask_cors import cross_origin 
-from functions import get_dropdown_values
+from .functions import *
 
 views = Blueprint('views',__name__)
 
@@ -13,38 +13,85 @@ views = Blueprint('views',__name__)
 @views.route('/')
 def index():
 
-    class_entry_relations = get_dropdown_values()
-                        
-
+    class_entry_relations = get_university_values()
+    all_courses = get_course_values()                  
+    courses = Course.query.all() 
+    universities = University
     default_classes = sorted(class_entry_relations.keys())
-    default_values = class_entry_relations[default_classes[0]]
+    default_universities = class_entry_relations[default_classes[0]]
+    default_courses = all_courses[class_entry_relations[default_classes[0]][0]]
 
     return render_template('index.html',
-                       all_classes=default_classes,
-                       all_entries=default_values,user=current_user)
+                       all_cities=default_classes,
+                       all_universities=default_universities,all_courses=default_courses,default_courses=default_courses,user=current_user,courses=courses,universities=universities)
 
-@views.route('/_update_dropdown')
+@views.route('/_update_university_dropdown')
 @cross_origin()
-def update_dropdown():
+def update_university_dropdown():
     # the value of the first dropdown (selected by the user)
-    selected_class = request.args.get('selected_class', type=str)
+    selected_city = json.loads(request.args.get('selected_city'))
     # get values for the second dropdown
-    updated_values = get_dropdown_values()[selected_class]
-    # create the valuesn in the dropdown as a html string
     html_string_selected = ''
-    for entry in updated_values:
-        html_string_selected += '<option value="{}">{}</option>'.format(entry, entry)
+    print(selected_city)
+    for city in selected_city:
+       updated_values = get_university_values()[city]
+       for entry in updated_values:
+            html_string_selected += '<option value="{}">{}</option>'.format(entry, entry)
+    # create the valuesn in the dropdown as a html string
+    
 
-    print('html_string_selected:', html_string_selected)
+    
+    #print('html_string_selected:', html_string_selected)
+
+    return jsonify(html_string_selected=html_string_selected)
+
+@views.route('/_update_course_dropdown')
+@cross_origin()
+def update_course_dropdown():
+    # the value of the first dropdown (selected by the user)
+    selected_university = json.loads(request.args.get('selected_university'))
+    
+    html_string_selected = ''
+    print(selected_university)
+    # get values for the second dropdown
+    for university in selected_university:
+        updated_values = get_course_values()[university]
+        for entry in updated_values:
+            html_string_selected += '<option value="{}">{}</option>'.format(entry, entry)
+    # create the valuesn in the dropdown as a html string
+
+    #print('html_string_selected:', html_string_selected)
 
     return jsonify(html_string_selected=html_string_selected)
 
 
-@views.route('/_process_data',methods=['GET','POST'])
-def process_data():
-    selected_class = request.args.get('selected_class', type=str)
-    selected_entry = request.args.get('selected_entry', type=str)
+@views.route('/_update_course_list',methods=['GET','POST'])
+def update_course_list():
+    selected_city = json.loads(request.args.get('selected_city'))
+    selected_university = json.loads(request.args.get('selected_university'))
+    selected_course = json.loads(request.args.get('selected_course'))
+    html_string_selected = ''
 
-    # process the two selected values here and return the response; here we just create a dummy string
+    if(selected_course):
+        for course in selected_course:
+            html_string_selected += '<a href="#" class="list-group-item list-group-item-action flex-column align-items-start active"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>'.format(course,University.query.filter_by(university_id=Course.query.filter_by(course_name=course).first().university_id).first().university_name,Course.query.filter_by(course_name=course).first().degree,Course.query.filter_by(course_name=course).first().cycle)
+            return jsonify(html_string_selected=html_string_selected)
+    
+    if(selected_university):
+        for uni in selected_university:
+            for course in University.query.filter_by(university_name=uni).first().course:
+                html_string_selected += '<a href="#" class="list-group-item list-group-item-action flex-column align-items-start active"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>'.format(course.course_name,University.query.filter_by(university_id=Course.query.filter_by(course_name=course.course_name).first().university_id).first().university_name,Course.query.filter_by(course_name=course.course_name).first().degree,Course.query.filter_by(course_name=course.course_name).first().cycle)
+        return jsonify(html_string_selected=html_string_selected) 
+    
+    if(selected_city):
+        for city in selected_city:
+            for uni in University.query.filter_by(location = city):
+                for course in University.query.filter_by(university_name=uni.university_name).first().course:
+                    html_string_selected += '<a href="#" class="list-group-item list-group-item-action flex-column align-items-start active"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>'.format(course.course_name,University.query.filter_by(university_id=Course.query.filter_by(course_name=course.course_name).first().university_id).first().university_name,Course.query.filter_by(course_name=course.course_name).first().degree,Course.query.filter_by(course_name=course.course_name).first().cycle)
+        return jsonify(html_string_selected=html_string_selected) 
 
-    return jsonify(random_text="You selected the city: {} and the school: {}.".format(selected_class, selected_entry))
+    if  (html_string_selected==''):
+        flash('Brak kursów!',category = 'error')
+    print("asdf")
+    
+    return jsonify(html_string_selected=html_string_selected)
