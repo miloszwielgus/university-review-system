@@ -14,6 +14,7 @@ def get_dropdown_values():
     # Create an empty dictionary
     myDict = {}
     l = 0
+    l = 0
     for p in universities:
     
         key = p.location
@@ -31,6 +32,7 @@ def get_dropdown_values():
     class_entry_relations = myDict
                         
     return class_entry_relations
+
 
 
 @views.route('/')
@@ -72,3 +74,39 @@ def process_data():
 
     return jsonify(random_text="You selected the city: {} and the school: {}.".format(selected_class, selected_entry))
 
+# example: http://127.0.0.1:5000/university/Uniwersytet%20Jagiello%C5%84ski%20w%20Krakowie
+@views.route('/university/<string:university_name>')
+def university(university_name):
+    # Connect to the MySQL database
+    mydb = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="root",
+        database="ProjectIO"
+    )
+    cursor = mydb.cursor()
+
+    cursor.execute('SELECT university_name, website FROM university WHERE university_name = %s', (university_name,))
+    university_data = cursor.fetchone()
+
+    if university_data is None:
+        # Handle the case when the university is not found
+        return 'university_not_found.html'
+
+    university_name, website = university_data
+
+    # Retrieve course names for the university from the database
+    cursor.execute('SELECT course_name FROM course WHERE university_id = (SELECT university_id FROM university where university_name=%s )', (university_name,))
+    courses_data = cursor.fetchall()
+    courses = [course[0] for course in courses_data]
+
+    mydb.close() 
+
+    
+
+    user = current_user if current_user.is_authenticated else None 
+    return render_template('university.html',
+                           university_name=university_name,
+                           website=website,
+                           user=user,
+                           courses=courses)

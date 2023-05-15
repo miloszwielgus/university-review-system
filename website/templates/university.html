@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}University Template{% endblock %}
+{% block content %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>University Template</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+ 
+    <div class="centered-blue">
+        <h1>{{ university_name }}</h1>
+        <p><a href="{{ website }}">{{ website }}</a></p>
+
+        <h2>Zapoznaj się z opiniami dla poszczególnych kierunków:</h2>
+        <ul>
+            {% for course in courses %}
+            <li><a href="#">{{ course }}</a></li>
+            {% endfor %}
+        </ul>
+
+    </div>
+    
+    <footer>
+        <p>&copy; University review system. All rights reserved.</p>
+    </footer>
+</body>
+</html>
+
+{% endblock %}
