@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template,request,flash,jsonify
 from flask_login import login_required,  current_user
-from . import db
+#from . import db
 from .models import User,University,Course
 import json
 from flask_cors import cross_origin 
@@ -73,7 +73,8 @@ def update_course_list():
     if(selected_course):
         for course in selected_course:
             html_string_selected += '<a href="#" class="list-group-item list-group-item-action flex-column align-items-start active"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>'.format(course,University.query.filter_by(university_id=Course.query.filter_by(course_name=course).first().university_id).first().university_name,Course.query.filter_by(course_name=course).first().degree,Course.query.filter_by(course_name=course).first().cycle)
-            return jsonify(html_string_selected=html_string_selected)
+            print(course)
+        return jsonify(html_string_selected=html_string_selected)
     
     if(selected_university):
         for uni in selected_university:
@@ -92,3 +93,10 @@ def update_course_list():
         flash('Brak kursów!',category = 'error')
     
     return jsonify(html_string_selected=html_string_selected)
+
+@views.route('/university/course/<string:course_name>')
+def university(course_name):
+   
+    return render_template('course.html',
+                           user=current_user,
+                           course=course_name)
