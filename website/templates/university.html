@@ -15,11 +15,20 @@
         <p><a href="{{ website }}">{{ website }}</a></p>
 
         <h2>Zapoznaj się z opiniami dla poszczególnych kierunków:</h2>
-        <ul>
+
+        <div class="list-group" id="course_list">
             {% for course in courses %}
-            <li><a href="#">{{ course }}</a></li>
+            <a href="/university/course/{{course.course_name}}" class="list-group-item list-group-item-action flex-column align-items-start active">
+             <div class="d-flex w-100 justify-content-between">
+               <h5  class="mb-1">{{course.course_name}}</h5>
+               <small>{{ university_name }}</small>
+             </div>
+             <p class="mb-1">Tytuł: {{course.degree}}</p>
+             <small>Typ: {{course.cycle}}</small>
+           </a>
             {% endfor %}
-        </ul>
+           </div>
+
 
     </div>
     
