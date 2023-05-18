@@ -72,21 +72,21 @@ def update_course_list():
 
     if(selected_course):
         for course in selected_course:
-            html_string_selected += '<a href="#" class="list-group-item list-group-item-action flex-column align-items-start active"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>'.format(course,University.query.filter_by(university_id=Course.query.filter_by(course_name=course).first().university_id).first().university_name,Course.query.filter_by(course_name=course).first().degree,Course.query.filter_by(course_name=course).first().cycle)
+            html_string_selected += '<a href="/university/course/{{course.course_name}}" class="list-group-item list-group-item-action flex-column align-items-start active"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>'.format(course,University.query.filter_by(university_id=Course.query.filter_by(course_name=course).first().university_id).first().university_name,Course.query.filter_by(course_name=course).first().degree,Course.query.filter_by(course_name=course).first().cycle)
             print(course)
         return jsonify(html_string_selected=html_string_selected)
     
     if(selected_university):
         for uni in selected_university:
             for course in University.query.filter_by(university_name=uni).first().course:
-                html_string_selected += '<a href="#" class="list-group-item list-group-item-action flex-column align-items-start active"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>'.format(course.course_name,University.query.filter_by(university_id=Course.query.filter_by(course_name=course.course_name).first().university_id).first().university_name,Course.query.filter_by(course_name=course.course_name).first().degree,Course.query.filter_by(course_name=course.course_name).first().cycle)
+                html_string_selected += '<a href="/university/course/{{course.course_name}}" class="list-group-item list-group-item-action flex-column align-items-start active"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>'.format(course.course_name,University.query.filter_by(university_id=Course.query.filter_by(course_name=course.course_name).first().university_id).first().university_name,Course.query.filter_by(course_name=course.course_name).first().degree,Course.query.filter_by(course_name=course.course_name).first().cycle)
         return jsonify(html_string_selected=html_string_selected) 
     
     if(selected_city):
         for city in selected_city:
             for uni in University.query.filter_by(location = city):
                 for course in University.query.filter_by(university_name=uni.university_name).first().course:
-                    html_string_selected += '<a href="#" class="list-group-item list-group-item-action flex-column align-items-start active"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>'.format(course.course_name,University.query.filter_by(university_id=Course.query.filter_by(course_name=course.course_name).first().university_id).first().university_name,Course.query.filter_by(course_name=course.course_name).first().degree,Course.query.filter_by(course_name=course.course_name).first().cycle)
+                    html_string_selected += '<a href="/university/course/{{course.course_name}}" class="list-group-item list-group-item-action flex-column align-items-start active"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>'.format(course.course_name,University.query.filter_by(university_id=Course.query.filter_by(course_name=course.course_name).first().university_id).first().university_name,Course.query.filter_by(course_name=course.course_name).first().degree,Course.query.filter_by(course_name=course.course_name).first().cycle)
         return jsonify(html_string_selected=html_string_selected) 
 
     if  (html_string_selected==''):
@@ -95,8 +95,18 @@ def update_course_list():
     return jsonify(html_string_selected=html_string_selected)
 
 @views.route('/university/course/<string:course_name>')
-def university(course_name):
+def course(course_name):
    
     return render_template('course.html',
                            user=current_user,
                            course=course_name)
+
+@views.route('/university/<string:university_name>')
+def university(university_name):
+
+    courses = Course.query.filter_by(university_id=University.query.filter_by(university_name=university_name).first().university_id)
+    website = University.query.filter_by(university_name=university_name).first().website
+    return render_template('university.html',
+                           user=current_user,
+                           university_name = university_name,website = website,
+                           courses=courses)

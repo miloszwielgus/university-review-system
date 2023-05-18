@@ -4,11 +4,8 @@ from .models import University,Course
 def get_university_values():
 
     universities = University.query.all()
-    courses = Course.query.all()
     # Create an empty dictionary
     myDict = {} 
-    coursesDict = {}
-    l=0
     for p in universities:
     
         key = p.location
