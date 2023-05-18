@@ -6,14 +6,17 @@ from flask_admin.contrib.sqla import ModelView
 from sqlalchemy.orm import relationship
 
 
-class User(db.Model,UserMixin):
+
+class User(db.Model, UserMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer,primary_key=True)
     email = db.Column(db.String(150),unique=True)
     password = db.Column(db.String(150)) 
     username = db.Column(db.String(150))
+
     rating = relationship("Rating",backref="user")
     
+
 
 class University(db.Model):
     __tablename__ = 'university'
@@ -29,19 +32,17 @@ class University(db.Model):
         return '\n university_id: {0} university_name: {1} location: {2} website: {3}'.format(self.university_id,
                                                                     self.university_name, self.location, self.website)
 
-
     def __str__(self):
 
         return '\n university_id: {0} university_name: {1} location: {2} website: {3}'.format(self.university_id,
                                                                     self.university_name, self.location, self.website)
 
-   
 
 class Course(db.Model):
     __tablename__ = 'course'
     course_id = db.Column(db.Integer, primary_key=True)
     course_name = db.Column(db.String(100), nullable=False)
-    syllabus = db.Column(db.String(100), nullable=False)
+    syllabus = db.Column(db.String(200), nullable=False)
     university_id = db.Column(db.Integer, db.ForeignKey('university.university_id'), nullable=False)
     degree = db.Column(db.String(100), nullable=False)
     cycle = db.Column(db.String(100), nullable=False)
@@ -52,6 +53,7 @@ class Course(db.Model):
         return '\n course_id: {0} course_name: {1} syllabus: {2} university_id: {3} degree: {4} cycle: {5}'.format(self.course_id,self.course_name,
                                                                                             self.syllabus,self.university_id,self.degree,self.cycle)
                                                                     
+
 
 
     def __str__(self):
@@ -72,13 +74,10 @@ class Rating(db.Model):
     
         return '\n rating_id: {0} user_id: {1} course_id: {2} rating_value: {3} rating_description: {4}'.format(self.rating_id,self.user_id,self.course_id,
                                                                                             self.rating_value,self.rating_description)
-                                                                    
-
 
     def __str__(self):
 
-       return '\n rating_id: {0} user_id: {1} course_id: {2} rating_value: {3} rating_description: {4}'.format(self.rating_id,self.user_id,self.course_id,
-                                                                                            self.rating_value,self.rating_description)
+       return '\n rating_id: {0} user_id: {1} course_id: {2} rating_value: {3} rating_description: {4}'.format(self.rating_id,self.user_id,self.course_id,self.rating_value,self.rating_description)
 
 class ChildCourse(ModelView):
     column_list = ['course_id', 'course_name', 'syllabus','university_id','degree','cycle']
@@ -95,3 +94,4 @@ class ChildUser(ModelView):
 class ChildUniversity(ModelView):
     column_list = ['university_id', 'university_name', 'location','website'] 
     form_columns = [ 'university_name', 'location','website']
+

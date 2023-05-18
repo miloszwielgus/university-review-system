@@ -10,6 +10,8 @@ views = Blueprint('views',__name__)
 
 
 
+
+
 @views.route('/')
 def index():
 
@@ -103,10 +105,10 @@ def course(course_name):
 
 @views.route('/university/<string:university_name>')
 def university(university_name):
-
     courses = Course.query.filter_by(university_id=University.query.filter_by(university_name=university_name).first().university_id)
     website = University.query.filter_by(university_name=university_name).first().website
     return render_template('university.html',
                            user=current_user,
                            university_name = university_name,website = website,
                            courses=courses)
+
