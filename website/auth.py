@@ -19,7 +19,7 @@ def login():
             if check_password_hash(user.password,password):
                 flash('Logged in successfully!',category = 'success')
                 login_user(user,remember=True)
-                return redirect(url_for('views.home'))
+                return redirect(url_for('views.index'))
             else:
                 flash('Incorrect password!',category = 'error')
         else:
@@ -76,7 +76,7 @@ def about():
 
 @auth.route('/home')
 def home():
-    return render_template("home.html", user=current_user)
+    return redirect(url_for('views.index'))
 
 
 @auth.route('/compare-courses')
