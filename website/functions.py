@@ -50,7 +50,7 @@ def get_course_values():
 
 def send_email(sender_email, sender_password, recipient_email, subject, message):
     # Set up the SMTP server
-    smtp_server = "smtp.example.com"
+    smtp_server = "smtp.poczta.onet.pl" #tu podajemy adres serwera smtp poczty wysylajacego, adresy innych domen tutaj: https://www.blulink.pl/serwery-poczty-smtp,-pop3,-imap,125.html
     smtp_port = 587
 
     # Create a multipart message and set headers
