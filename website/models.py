@@ -45,7 +45,8 @@ class Course(db.Model):
     syllabus = db.Column(db.String(200), nullable=False)
     university_id = db.Column(db.Integer, db.ForeignKey('university.university_id'), nullable=False)
     degree = db.Column(db.String(100), nullable=False)
-    cycle = db.Column(db.String(100), nullable=False)
+    cycle = db.Column(db.String(100), nullable=False) 
+    department = db.Column(db.String(100))
     rating = relationship("Rating",backref="Course")
 
     def __repr__(self):
@@ -65,27 +66,32 @@ class Course(db.Model):
 class Rating(db.Model):
     __tablename__ = 'rating'
     rating_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    username = db.Column(db.String(100), db.ForeignKey('user.username'), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('course.course_id'), nullable=False)
-    rating_value = db.Column(db.Integer, nullable=False)
+    quality_value = db.Column(db.Integer, nullable=False)
+    difficulty_value = db.Column(db.Integer, nullable=False)
     rating_description = db.Column(db.String(500))
+
+    
+
+
 
     def __repr__(self):
     
-        return '\n rating_id: {0} user_id: {1} course_id: {2} rating_value: {3} rating_description: {4}'.format(self.rating_id,self.user_id,self.course_id,
-                                                                                            self.rating_value,self.rating_description)
+        return '\n rating_id: {0} username: {1} course_id: {2} rating_value: {3} rating_description: {4}'.format(self.rating_id,self.username,self.course_id,
+                                                                                            self.quality_value,self.rating_description)
 
     def __str__(self):
 
-       return '\n rating_id: {0} user_id: {1} course_id: {2} rating_value: {3} rating_description: {4}'.format(self.rating_id,self.user_id,self.course_id,self.rating_value,self.rating_description)
+       return '\n rating_id: {0} username: {1} course_id: {2} rating_value: {3} rating_description: {4}'.format(self.rating_id,self.username,self.course_id,self.quality_value,self.rating_description)
 
 class ChildCourse(ModelView):
-    column_list = ['course_id', 'course_name', 'syllabus','university_id','degree','cycle']
-    form_columns = ['course_name', 'syllabus','university_id','degree','cycle']
+    column_list = ['course_id', 'course_name', 'syllabus','university_id','degree','cycle','department']
+    form_columns = ['course_name', 'syllabus','university_id','degree','cycle','department']
 
 class ChildRating(ModelView):
-    column_list = ['rating_id','user_id','course_id', 'rating_value','rating_description']
-    form_columns = ['user_id','course_id', 'rating_value','rating_description']
+    column_list = ['rating_id','username','course_id', 'quality_value','difficulty_value','rating_description']
+    form_columns = ['username','course_id', 'quality_value','difficulty_value','rating_description']
 
 class ChildUser(ModelView):
     column_list = ['id', 'email', 'password','username']
