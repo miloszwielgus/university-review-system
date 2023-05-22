@@ -1,5 +1,8 @@
 from . import db
 from .models import University,Course
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 def get_university_values():
 
@@ -42,3 +45,36 @@ def get_course_values():
     class_entry_relations = myDict
                         
     return class_entry_relations 
+
+
+
+def send_email(sender_email, sender_password, recipient_email, subject, message):
+    # Set up the SMTP server
+    smtp_server = "smtp.example.com"
+    smtp_port = 587
+
+    # Create a multipart message and set headers
+    msg = MIMEMultipart()
+    msg["From"] = sender_email
+    msg["To"] = recipient_email
+    msg["Subject"] = subject
+
+    # Add body to email
+    msg.attach(MIMEText(message, "plain"))
+
+    try:
+        # Log in to the SMTP server
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()
+        server.login(sender_email, sender_password)
+
+        # Send the email
+        server.sendmail(sender_email, recipient_email, msg.as_string())
+
+        print("Email sent successfully!")
+    except Exception as e:
+        print(f"An error occurred while sending the email: {str(e)}")
+        return
+    finally:
+        # Close the SMTP server connection
+        server.quit()
