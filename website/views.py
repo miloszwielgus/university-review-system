@@ -112,3 +112,8 @@ def university(university_name):
                            university_name = university_name,website = website,
                            courses=courses)
 
+@views.route('/style.css')
+def style():
+    return views.send_static_file('style.css')
+
+

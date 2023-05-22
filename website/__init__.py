@@ -11,7 +11,7 @@ DB_NAME = "unidatabase.db"
 
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder='static')
     CORS(app)
     app.config['SECRET_KEY'] = '3489qwako23i3nnASp'
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'

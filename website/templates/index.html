@@ -10,14 +10,14 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1 class="text-center text-muted">Wybierz swój kierunek</h1>
+      <h1 class="text-center" style="color: #024959" >Wybierz swój kierunek</h1>
     </div>
 
     <br /><br /><br />
 
     <div class="row">
       <div >
-        <label for="all_cities">
+        <label for="all_cities" style="color:#024959;">
           Wybierz miasto</label>
         <select class="js-example-basic-multiple" name="all_cities[]" multiple="multiple" style="width: 90%" id="all_cities">
           {% for o in all_cities %}
@@ -26,7 +26,7 @@
         </select>
       </div>
       <div >
-        <label for="all_universities">
+        <label for="all_universities" style="color:#024959;">
           Wybierz uczelnię
         </label>
         <select class="js-example-basic-multiple" name="all_universities[]" multiple="multiple" style="width: 90%" id="all_universities">
@@ -36,7 +36,7 @@
         </select>
       </div>
       <div >
-      <label for="all_courses">
+      <label for="all_courses" style="color:#024959;">
         Wybierz kierunek studiów</label>
       <select class="js-example-basic-multiple" name="all_courses[]" multiple="multiple" style="width: 90%" id="all_courses">
         {% for o in all_courses %}
@@ -50,7 +50,7 @@
       <br /><br />
       <button
         type="button"
-        style="color: white; background: #3498db"
+       
         id="process_input"
       >
         Pokaż kierunki!
@@ -58,7 +58,7 @@
     </div>
     
   </div>
-<h1 align="center">Kierunki</h1>
+<h1 align="center" style="color: #024959;" >Kierunki</h1>
 <div class="list-group" id="course_list">
    {% for course in courses %}
    <a href="/university/course/{{course.course_name}}" class="list-group-item list-group-item-action flex-column align-items-start active">
@@ -108,5 +108,6 @@
       });
     });
   </script>
+  <link href="static/style.css" rel="stylesheet"  />
 </body>
 {%endblock%}
