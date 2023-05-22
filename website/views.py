@@ -1,10 +1,11 @@
 from flask import Blueprint, render_template,request,flash,jsonify
 from flask_login import login_required,  current_user
 #from . import db
-from .models import User,University,Course
+from .models import *
 import json
 from flask_cors import cross_origin 
 from .functions import *
+from sqlalchemy import select
 
 views = Blueprint('views',__name__)
 
@@ -69,26 +70,49 @@ def update_course_dropdown():
 def update_course_list():
     selected_city = json.loads(request.args.get('selected_city'))
     selected_university = json.loads(request.args.get('selected_university'))
-    selected_course = json.loads(request.args.get('selected_course'))
+    selected_course = json.loads(request.args.get('selected_course')) 
+    universities = University.query.filter(University.university_name.in_(selected_university)).all() 
+    
+    university_ids = []
+    for uni in universities: 
+         university_ids.append(uni.university_id)
     html_string_selected = ''
 
     if(selected_course):
-        for course in selected_course:
-            html_string_selected += '<a href="/university/course/{{course.course_name}}" class="list-group-item list-group-item-action flex-column align-items-start active"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>'.format(course,University.query.filter_by(university_id=Course.query.filter_by(course_name=course).first().university_id).first().university_name,Course.query.filter_by(course_name=course).first().degree,Course.query.filter_by(course_name=course).first().cycle)
-            print(course)
+        course_ids = []  
+        if (not selected_city and not selected_university):
+               # course_ids =  select(Course).where(Course.course_name.in_(selected_course))  
+                course_ids = Course.query.filter(Course.course_name.in_(selected_course)).all()
+        elif (selected_university):
+               # course_ids =  select(Course).where(Course.course_name.in_(selected_course)).where(Course.university_id.in_(university_ids.university_id)) 
+               course_ids = Course.query.filter(Course.course_name.in_(selected_course),Course.university_id.in_(university_ids)).all()
+        elif (selected_city):
+                #course_ids = select(Course).where(Course.course_name.in_(selected_course)).where(
+                 #                                 Course.university_id.in_(select(University.university_id).where(University.location.in_(selected_city))))
+                 unis = University.query.filter(University.location.in_(selected_city)).all()
+                 university_ids.clear()
+                 for uni in unis: 
+                    university_ids.append(uni.university_id)
+                 course_ids = Course.query.filter(Course.course_name.in_(selected_course),Course.university_id.in_(university_ids)).all()
+        for course in course_ids:
+            html_string_selected += '<a href="/university/course/{}" class="list-group-item list-group-item-action flex-column align-items-start active"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>'.format(course.course_id,course.course_name,University.query.filter_by(university_id=course.university_id).first().university_name,course.degree,course.cycle)
         return jsonify(html_string_selected=html_string_selected)
     
-    if(selected_university):
-        for uni in selected_university:
-            for course in University.query.filter_by(university_name=uni).first().course:
-                html_string_selected += '<a href="/university/course/{{course.course_name}}" class="list-group-item list-group-item-action flex-column align-items-start active"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>'.format(course.course_name,University.query.filter_by(university_id=Course.query.filter_by(course_name=course.course_name).first().university_id).first().university_name,Course.query.filter_by(course_name=course.course_name).first().degree,Course.query.filter_by(course_name=course.course_name).first().cycle)
+    if(selected_university): 
+        #course_ids = select(Course).where(Course.university_id.in_(select(University.university_id).where(University.university_name.in_(selected_university))))
+        course_ids = Course.query.filter(Course.university_id.in_(university_ids)).all()
+        for course in course_ids:
+            html_string_selected += '<a href="/university/course/{}" class="list-group-item list-group-item-action flex-column align-items-start active"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>'.format(course.course_id,course.course_name,University.query.filter_by(university_id=course.university_id).first().university_name,course.degree,course.cycle)
         return jsonify(html_string_selected=html_string_selected) 
     
     if(selected_city):
-        for city in selected_city:
-            for uni in University.query.filter_by(location = city):
-                for course in University.query.filter_by(university_name=uni.university_name).first().course:
-                    html_string_selected += '<a href="/university/course/{{course.course_name}}" class="list-group-item list-group-item-action flex-column align-items-start active"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>'.format(course.course_name,University.query.filter_by(university_id=Course.query.filter_by(course_name=course.course_name).first().university_id).first().university_name,Course.query.filter_by(course_name=course.course_name).first().degree,Course.query.filter_by(course_name=course.course_name).first().cycle)
+        unis = University.query.filter(University.location.in_(selected_city)).all()
+        university_ids.clear()
+        for uni in unis: 
+            university_ids.append(uni.university_id)
+        course_ids = Course.query.filter(Course.university_id.in_(university_ids)).all()
+        for course in course_ids:
+            html_string_selected += '<a href="/university/course/{}" class="list-group-item list-group-item-action flex-column align-items-start active"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>'.format(course.course_id,course.course_name,University.query.filter_by(university_id=course.university_id).first().university_name,course.degree,course.cycle)
         return jsonify(html_string_selected=html_string_selected) 
 
     if  (html_string_selected==''):
@@ -96,12 +120,23 @@ def update_course_list():
     
     return jsonify(html_string_selected=html_string_selected)
 
-@views.route('/university/course/<string:course_name>')
-def course(course_name):
-   
+@views.route('/university/course/<int:course_id>')
+def course(course_id):
+    ratings = Rating.query.filter_by(course_id=course_id).all()
+    course = Course.query.filter_by(course_id = course_id).first()
+    university_name = University.query.filter_by(university_id =course.university_id).first().university_name 
+    users = User.query.all()
+    avg_rating = 0
+    number_of_ratings = 0               #to do: implement a better mechanism for avg_rating (it should be stored somewhere and updated)
+    for rating in ratings:
+        avg_rating += (rating.quality_value + rating.difficulty_value)
+        number_of_ratings += 1 
+    if number_of_ratings != 0:
+        avg_rating /= (number_of_ratings*2) 
+
     return render_template('course.html',
                            user=current_user,
-                           course=course_name)
+                           course=course,ratings=ratings,avg_rating=avg_rating,number_of_ratings=number_of_ratings,university_name=university_name,users=users)
 
 @views.route('/university/<string:university_name>')
 def university(university_name):

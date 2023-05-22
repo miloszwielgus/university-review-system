@@ -61,7 +61,7 @@
 <h1 align="center" style="color: #024959;" >Kierunki</h1>
 <div class="list-group" id="course_list">
    {% for course in courses %}
-   <a href="/university/course/{{course.course_name}}" class="list-group-item list-group-item-action flex-column align-items-start active">
+   <a href="/university/course/{{course.course_id}}" class="list-group-item list-group-item-action flex-column align-items-start active">
     <div class="d-flex w-100 justify-content-between">
       <h5  class="mb-1">{{course.course_name}}</h5>
       <small>{{ universities.query.filter_by(university_id=course.university_id).first().university_name }}</small>
