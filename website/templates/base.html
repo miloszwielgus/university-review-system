@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
@@ -14,6 +15,17 @@
       href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
       crossorigin="anonymous"
     />
+    <style>
+      /* CSS to position the SVG logo */
+      .logo-container {
+        position: absolute;
+        top: 8px; /* Adjust the top position as needed */
+        right: 20px;
+        width: 150px; /* Adjust the width as needed */
+        height: 150px; /* Adjust the height as needed */
+        z-index: 9999;
+      }
+    </style>
 
     <title>{% block title %}Home{% endblock %}</title>
   </head>
@@ -68,6 +80,10 @@
 
     <div class="container">{% block content %} {% endblock %}</div>
 
+    <!-- SVG logo -->
+    <div class="logo-container">
+      <img src="{{ url_for('static', filename='2.svg') }}" alt="Logo" width="100%" height="100%">
+    </div>
 
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
@@ -83,4 +99,5 @@
     
 
   </body>
+ 
 </html>
