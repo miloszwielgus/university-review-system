@@ -76,7 +76,7 @@ def about():
 
 @auth.route('/home')
 def home():
-    return render_template("home.html", user=current_user)
+    return redirect(url_for('views.index'))
 
 
 @auth.route('/compare-courses')
