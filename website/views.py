@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template,request,flash,jsonify
 from flask_login import login_required,  current_user
 #from . import db
-from .models import User,University,Course
+from .models import *
 import json
 from flask_cors import cross_origin 
 from .functions import *
@@ -96,12 +96,21 @@ def update_course_list():
     
     return jsonify(html_string_selected=html_string_selected)
 
-@views.route('/university/course/<string:course_name>')
-def course(course_name):
-   
+@views.route('/university/course/<int:course_id>')
+def course(course_id):
+    ratings = Rating.query.filter_by(course_id=course_id).all()
+    course = Course.query.filter_by(course_id = course_id).first()
+    university_name = University.query.filter_by(university_id =course.university_id).first().university_name 
+    users = User.query.all()
+    avg_rating = 0
+    number_of_ratings = 0               #to do: implement a better mechanism for avg_rating (it should be stored somewhere and updated)
+    for rating in ratings:
+        avg_rating += (rating.quality_value + rating.difficulty_value)
+        number_of_ratings += 1 
+    avg_rating /= (number_of_ratings*2) 
     return render_template('course.html',
                            user=current_user,
-                           course=course_name)
+                           course=course,ratings=ratings,avg_rating=avg_rating,number_of_ratings=number_of_ratings,university_name=university_name,users=users)
 
 @views.route('/university/<string:university_name>')
 def university(university_name):
