@@ -1,9 +1,9 @@
 {% extends "base.html" %} {% block title %}Login{% endblock %} {% block content
     %}
-    <form method="POST">
-      <h3 align="center">Login</h3>
+    <form id="login-form" method="POST">
+      <h3 align="center" style="color:#024959;">Zaloguj się</h3>
       <div class="form-group">
-        <label for="email">Email Address</label>
+        <label for="email" style="color:#024959;">Adres Email</label>
         <input
           type="email"
           class="form-control"
@@ -13,7 +13,7 @@
         />
       </div>
       <div class="form-group">
-        <label for="password">Password</label>
+        <label for="password" style="color:#024959;">Hasło</label>
         <input
           type="password"
           class="form-control"
@@ -23,7 +23,8 @@
         />
       </div>
       <br />
-      <button type="submit" class="btn btn-primary">Login</button>
+      <button type="submit" class="btn btn-primary">Zaloguj się</button>
+      <link href="static/style.css" rel="stylesheet"  />
     </from>
     {% endblock %}
     
