@@ -10,21 +10,6 @@ from sqlalchemy import select
 views = Blueprint('views',__name__)
 
 
-
-@views.route('/uni-list')
-def uni_list():
-    class_entry_relations = get_university_values()
-    all_courses = get_course_values()
-    courses = Course.query.all()
-    universities = University
-    default_classes = sorted(class_entry_relations.keys())
-    default_universities = class_entry_relations[default_classes[0]]
-    default_courses = all_courses[class_entry_relations[default_classes[0]][0]]
-
-    return render_template('uni-list.html',
-                       all_cities=default_classes,
-                       all_universities=default_universities,all_courses=default_courses,default_courses=default_courses,user=current_user,courses=courses,universities=universities)
-
 @views.route('/')
 def index():
 
@@ -163,4 +148,29 @@ def university(university_name):
 def style():
     return views.send_static_file('style.css')
 
+@views.route('/university_list')
+def uni_list():
+    universities = University.query.all()
+    cities = [university.location for university in universities]
+    user=current_user
+    return render_template('uni-list.html', universities=universities, cities=cities, user=user)
+
+@views.route('/_update_university_list', methods=['GET'])
+def update_university_list():
+    selected_city = json.loads(request.args.get('selected_city'))
+    universities = University.query.filter(University.location.in_(selected_city)).all()
+    
+    html_string_selected = ''
+    for university in universities:
+        html_string_selected += """
+        <div class="list-group-item list-group-item-action flex-column align-items-start active">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">{}</h5>
+          </div>
+          <p class="mb-1">Miasto: {}</p>
+          <p class="mb-1">Strona internetowa: <a href="{}">{}</a></p>
+        </div>
+        """.format(university.university_name, university.location, university.website, university.website)
+
+    return jsonify(html_string_selected=html_string_selected)
 
