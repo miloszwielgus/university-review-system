@@ -11,14 +11,26 @@ views = Blueprint('views',__name__)
 
 
 
+@views.route('/uni-list')
+def uni_list():
+    class_entry_relations = get_university_values()
+    all_courses = get_course_values()
+    courses = Course.query.all()
+    universities = University
+    default_classes = sorted(class_entry_relations.keys())
+    default_universities = class_entry_relations[default_classes[0]]
+    default_courses = all_courses[class_entry_relations[default_classes[0]][0]]
 
+    return render_template('uni-list.html',
+                       all_cities=default_classes,
+                       all_universities=default_universities,all_courses=default_courses,default_courses=default_courses,user=current_user,courses=courses,universities=universities)
 
 @views.route('/')
 def index():
 
     class_entry_relations = get_university_values()
-    all_courses = get_course_values()                  
-    courses = Course.query.all() 
+    all_courses = get_course_values()
+    courses = Course.query.all()
     universities = University
     default_classes = sorted(class_entry_relations.keys())
     default_universities = class_entry_relations[default_classes[0]]

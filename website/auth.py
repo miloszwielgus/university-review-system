@@ -88,3 +88,4 @@ def compare_courses():
 def add_opinion():
     return render_template("addopinion.html", user=current_user)
 
+

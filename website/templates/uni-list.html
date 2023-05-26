@@ -1,0 +1,94 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+%}
+<head>
+  <link
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 class="text-center" style="color: #024959" >Lista uniwersytetów</h1>
+    </div>
+
+    <br /><br /><br />
+
+    <div class="row">
+      <div >
+        <label for="all_cities" style="color:#024959;">
+          Wybierz miasto</label>
+        <select class="js-example-basic-multiple" name="all_cities[]" multiple="multiple" style="width: 90%" id="all_cities">
+          {% for o in all_cities %}
+            <option value="{{ o }}">{{ o }}</option>
+            {% endfor %}
+        </select>
+      </div>
+
+    </div>
+
+    <div>
+      <br /><br />
+      <button
+        type="button"
+
+        id="process_input"
+      >
+        Pokaż uniwersytety!
+      </button>
+    </div>
+
+  </div>
+
+<div class="list-group" id="uni_list">
+   {% for course in courses %}
+  <a href="/university/course/{{course.course_id}}" class="list-group-item list-group-item-action flex-column align-items-start active">
+    <div class="d-flex w-100 justify-content-between">
+      <h5  class="mb-1">{{universities.query.filter_by(university_id=course.university_id).first().university_name }}</h5>
+
+    </div>
+    <p class="mb-1">Miasto: {{universities.query.filter_by(university_id=course.university_id).first().location}}</p>
+    <small>Typ: {{course.cycle}}</small>
+  </a>
+   {% endfor %}
+  </div>
+  <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $("#all_cities").select2();
+      $("#all_universities").select2();
+      $("#all_cities").on('change', function () {
+        jQuery.getJSON("{{ url_for('views.update_university_dropdown') }}", {
+          selected_city: JSON.stringify($("#all_cities").select2("val")),
+        }).done(function (selected_city) {
+          $("#all_universities").html(selected_city.html_string_selected);
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+        });
+      });
+      $("#all_universities").on('change', function () {
+        jQuery.getJSON("{{ url_for('views.update_course_dropdown') }}", {
+          selected_university: JSON.stringify($("#all_universities").select2("val")),
+        }).done(function (selected_university) {
+          $("#all_courses").html(selected_university.html_string_selected);
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+        });
+      });
+      $("#process_input").bind("click", function () {
+        jQuery.getJSON("{{ url_for('views.update_course_list') }}", {
+          selected_city: JSON.stringify($("#all_cities").select2("val")),
+          selected_university: JSON.stringify($("#all_universities").select2("val")),
+          selected_course: JSON.stringify($("#all_courses").select2("val")),
+        }).done(function (selected_city) {
+          $("#course_list").html(selected_city.html_string_selected);
+        });
+        return false;
+      });
+    });
+  </script>
+  <link href="static/style.css" rel="stylesheet"  />
+</body>
+{%endblock%}
