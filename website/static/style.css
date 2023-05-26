@@ -2,18 +2,25 @@
 
 
 body {
-  background-color: white; 
+  background-color: white;
 }
 
 
 
 /* Override font style for the select elements */
-.select2-container .select2-selection--multiple, 
+.select2-container .select2-selection--multiple,
 .select2-container--default .select2-selection--multiple {
   font-family: Arial, sans-serif;
   font-size: 14px;
   color: #441ea4;
 }
+
+/* .container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f2e9;
+} */
 
 /* Override font style for the button */
 #process_input {
@@ -22,12 +29,12 @@ body {
   color: white;
   background: #024959;
   border-radius: 20px;
-  border: 2px solid #024959; 
-  padding: 10px 20px; 
+  border: 2px solid #024959;
+  padding: 10px 20px;
 }
 
 /* Override font style for the course list items */
-#course_list .list-group-item h5 {
+.list-group-item h5 {
   font-family: Arial, sans-serif;
   font-size: 18px;
   background-color: #f9f2e9;
@@ -35,25 +42,46 @@ body {
   color: #024959;
 }
 
-#course_list .list-group-item small {
+.list-group-item small {
   font-family: Arial, sans-serif;
   font-size: 12px;
-  background-color:#f9f2e9; ;
+  background-color: #f9f2e9;
+  ;
   color: #026773;
 }
 
-#course_list .list-group-item p {
+.list-group-item p {
   font-family: Arial, sans-serif;
   font-size: 14px;
-  background-color: #f9f2e9; ;
+  background-color: #f9f2e9;
+  ;
   color: #3CA6A6;
 }
 
-#course_list .list-group-item {
- 
-  background-color: #f9f2e9; 
- 
+.list-group-item a {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  background-color: #f9f2e9;
+  ;
+  color: #3CA6A6;
 }
+
+.list-group-item {
+
+  background-color: #f9f2e9;
+
+}
+
+.list-group {
+  background-color: #f9f2e9;
+  margin-top: 20px;
+}
+
+.list-group-item.active {
+  background-color:  #f9f2e9;
+  color: #fff;
+}
+
 
 #login-form button {
 
@@ -79,4 +107,58 @@ body {
 }
 
 
+.move-button {
+  position: relative;
+  top: -10px;
+  /* Adjust the value as per your requirement */
+  right: 10px;
+  /* Adjust the value as per your requirement */
+}
 
+.list-group-item h5:hover {
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  background-color: #f9f2e9;
+  font-weight: bold;
+  color: #024959;
+}
+
+.list-group-item small:hover {
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  background-color: #f9f2e9;
+  ;
+  color: #026773;
+}
+
+.list-group-item p:hover {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  background-color: #f9f2e9;
+  ;
+  color: #3CA6A6;
+}
+
+.list-group-item a:hover {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  background-color: #f9f2e9;
+  ;
+  color: #3CA6A6;
+}
+
+.list-group-item:hover {
+
+  background-color: #f9f2e9;
+
+}
+
+.list-group:hover {
+  background-color: #f9f2e9;
+  margin-top: 20px;
+}
+
+.list-group-item.active:hover {
+  background-color:  #f9f2e9;
+  color: #fff;
+}

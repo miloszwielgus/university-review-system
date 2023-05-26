@@ -43,14 +43,20 @@
       <div class="collapse navbar-collapse" id="navbar">
         <div class="navbar-nav">
           {% if user.is_authenticated %}
-          <a class="nav-item nav-link custom-link" id="home" href="/home">Strona Główna</a>
           <a class="nav-item nav-link custom-link" id="logout" href="/logout">Wyloguj się</a>
+          <a class="nav-item nav-link custom-link" id="home" href="/home">Strona Główna</a>
           <a class="nav-item nav-link custom-link" id="search" href="/compare-courses">Porównaj</a>
+          <a class="nav-item nav-link custom-link" id="unilist" href="/university_list">Uniwersytety</a>
+          <a class="nav-item nav-link custom-link" id="aboutUs" href="/about">O nas</a>
 
           {% else %}
-          <a class="nav-item nav-link custom-link" id="login" href="/login">Zaloguj się</a>
+
           <a class="nav-item nav-link custom-link" id="signUp" href="/sign-up">Załóż konto</a>
-          <a class="nav-item nav-link custom-link" id="search" href="/home">Strona Główna</a>
+          <a class="nav-item nav-link custom-link" id="home" href="/home">Strona Główna</a>
+          <a class="nav-item nav-link custom-link" id="login" href="/login">Zaloguj się</a>
+          <a class="nav-item nav-link custom-link" id="unilist" href="/university_list">Uniwersytety</a>
+          <a class="nav-item nav-link custom-link" id="aboutUs" href="/about">O nas</a>
+
           {% endif %}
         </div>
       </div>
