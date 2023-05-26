@@ -83,3 +83,8 @@ def home():
 def compare_courses():
     return render_template("compare-courses.html", user=current_user)
 
+
+@auth.route('/add-opinion')
+def add_opinion():
+    return render_template("addopinion.html", user=current_user)
+
