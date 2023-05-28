@@ -198,31 +198,6 @@ def get_courses():
         courses_data.append(course_data)
     return jsonify(courses_data)
 
-# @views.route('/compare_courses')
-# def compare_courses():
-#     university1_course_id = request.args.get('university1CourseId')
-#     university2_course_id = request.args.get('university2CourseId')
-    
-#     university1_course = Course.query.get(university1_course_id)
-#     university2_course = Course.query.get(university2_course_id)
-    
-#     comparison_data = {
-#         'course_name': university1_course.course_name,
-#         'university1_info': {
-#             'syllabus': university1_course.syllabus,
-#             'degree': university1_course.degree,
-#             'cycle': university1_course.cycle,
-#             'department': university1_course.department
-#         },
-#         'university2_info': {
-#             'syllabus': university2_course.syllabus,
-#             'degree': university2_course.degree,
-#             'cycle': university2_course.cycle,
-#             'department': university2_course.department
-#         }
-#     }
-    
-#     return jsonify(comparison_data)
 @views.route('/compare_courses')
 def compare_courses():
     university1CourseId = request.args.get('university1CourseId')
@@ -271,59 +246,3 @@ def calculate_average_rating(course):
     else:
         return 'Brak opinii'
 
-
-
-
-# @views.route('/compare')
-# def compare():
-#     # Fetch universities from the database and pass them to the template
-#     universities = University.query.all()
-#     return render_template('compare_courses.html', universities=universities, user=current_user)
-
-
-# @views.route('/get_courses')
-# def get_courses():
-#     university_id = request.args.get('universityId')
-#     courses = Course.query.filter_by(university_id=university_id).all()
-#     courses_data = []
-#     for course in courses:
-#         course_data = {
-#             'id': course.id,
-#             'course_name': course.course_name,
-#             'syllabus': course.syllabus,
-#             'degree': course.degree,
-#             'cycle': course.cycle,
-#             'department': course.department
-#         }
-#         courses_data.append(course_data)
-#     return jsonify(courses_data)
-
-
-# @views.route('/compare_courses')
-# def compare_courses():
-#     university1_id = request.args.get('university1Id')
-#     university2_id = request.args.get('university2Id')
-#     course1_id = request.args.get('course1Id')
-#     course2_id = request.args.get('course2Id')
-
-#     university1_course = Course.query.get(course1_id)
-#     university2_course = Course.query.get(course2_id)
-
-#     data = {
-#         'university1_course': {
-#             'course_name': university1_course.course_name,
-#             'syllabus': university1_course.syllabus,
-#             'degree': university1_course.degree,
-#             'cycle': university1_course.cycle,
-#             'department': university1_course.department
-#         },
-#         'university2_course': {
-#             'course_name': university2_course.course_name,
-#             'syllabus': university2_course.syllabus,
-#             'degree': university2_course.degree,
-#             'cycle': university2_course.cycle,
-#             'department': university2_course.department
-#         }
-#     }
-
-#     return jsonify(data)
