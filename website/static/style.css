@@ -5,13 +5,58 @@ body {
   background-color: white;
 }
 
+.row-text-center {
+  display: flex;
+  justify-content: center;
+}
 
+.comparison-page {
+  margin-right: 10px;
+  margin-left: 10px;
+  width: 50%;
+  font-size: 16px;
+  color: #024959;
+}
 
+.button-compare button{
+  position: relative;
+  top: 15px;
+  /* Adjust the value as per your requirement */
+  right: -500px;
+  /* Adjust the value as per your requirement */
+  background-color: #026773;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+
+}
+.row-comparision-page label{
+  font-size: 16px;
+  color: #024959;
+  font-family: Arial, sans-serif;
+  position: center;
+
+}
+
+.row label{
+  font-size: 20px;
+  color: #024959;
+  font-family: Arial, sans-serif;
+
+}
+
+.row h3{
+  font-size: 20px;
+  color: #024959;
+  font-family: Arial, sans-serif;
+
+}
 /* Override font style for the select elements */
 .select2-container .select2-selection--multiple,
 .select2-container--default .select2-selection--multiple {
   font-family: Arial, sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   color: #441ea4;
 }
 
