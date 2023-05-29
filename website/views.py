@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template,request,flash,jsonify
+from flask import Blueprint, render_template,request,flash,jsonify,url_for
 from flask_login import login_required,  current_user
 #from . import db
 from .models import *
@@ -169,15 +169,16 @@ def update_university_list():
     
     html_string_selected = ''
     for university in universities:
+        university_link = url_for('views.university', university_name=university.university_name)
         html_string_selected += """
         <div class="list-group-item list-group-item-action flex-column align-items-start active">
           <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">{}</h5>
+            <h5 class="mb-1"><a href="{}">{}</a></h5>
           </div>
-          <p class="mb-1">Miasto: {}</p>
-          <p class="mb-1">Strona internetowa: <a href="{}">{}</a></p>
+          <p class="mb-1" >Miasto: {}</p>
+          <p class="mb-1">Strona internetowa: <a style="color:black;" href="{}">{}</a></p>
         </div>
-        """.format(university.university_name, university.location, university.website, university.website)
+        """.format(university_link, university.university_name, university.location, university.website, university.website)
 
     return jsonify(html_string_selected=html_string_selected)
 
