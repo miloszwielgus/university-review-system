@@ -37,7 +37,11 @@
     {% for university in universities %}
       <div class="list-group-item list-group-item-action flex-column align-items-start active">
         <div class="d-flex w-100 justify-content-between">
-          <h5 class="mb-1">{{ university.university_name }}</h5>
+          <h5 class="mb-1">
+            <a href="{{ url_for('views.university', university_name=university.university_name) }}">
+              {{ university.university_name }}
+            </a>
+          </h5>
         </div>
         <p class="mb-1">Miasto: {{ university.location }}</p>
         <p class="mb-1">Strona internetowa: <a style="color:black;" href="{{ university.website }}">{{ university.website }}</a></p>
@@ -63,7 +67,6 @@
 });
 
   </script>
-
-  <link href="static/style.css" rel="stylesheet" />
+<link href="static/style.css" rel="stylesheet" />
 </body>
 {% endblock %}
