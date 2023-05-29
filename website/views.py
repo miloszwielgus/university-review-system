@@ -133,20 +133,27 @@ def course(course_id):
 
     return render_template('course.html',
                            user=current_user,
-                           course=course,ratings=ratings,avg_rating=avg_rating,number_of_ratings=number_of_ratings,university_name=university_name,users=users)
+                           course=course,course_id=course_id,ratings=ratings,avg_rating=avg_rating,number_of_ratings=number_of_ratings,university_name=university_name,users=users)
 
 @views.route('/university/<string:university_name>')
 def university(university_name):
     courses = Course.query.filter_by(university_id=University.query.filter_by(university_name=university_name).first().university_id)
     website = University.query.filter_by(university_name=university_name).first().website
-    return render_template('university.html',
-                           user=current_user,
-                           university_name = university_name,website = website,
-                           courses=courses)
+    if university:
+        return render_template('university.html',
+                            user=current_user,
+                            university_name = university_name,website = website,
+                            courses=courses)
+    else:
+         flash('University not found', 'error')
+        
+
 
 @views.route('/style.css')
 def style():
     return views.send_static_file('style.css')
+
+
 
 @views.route('/university_list')
 def uni_list():
