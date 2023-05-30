@@ -19,10 +19,12 @@ def index():
     class_entry_relations = get_university_values()
     all_courses = get_course_values()                  
     courses = Course.query.all() 
+    default_courses=[] 
+    for course in courses:
+        default_courses.append(course.course_name)
     universities = University
     default_classes = sorted(class_entry_relations.keys())
     default_universities = class_entry_relations[default_classes[0]]
-    default_courses = all_courses[class_entry_relations[default_classes[0]][0]]
 
     return render_template('index.html',
                        all_cities=default_classes,
@@ -81,14 +83,10 @@ def update_course_list():
     if(selected_course):
         course_ids = []  
         if (not selected_city and not selected_university):
-               # course_ids =  select(Course).where(Course.course_name.in_(selected_course))  
                 course_ids = Course.query.filter(Course.course_name.in_(selected_course)).all()
         elif (selected_university):
-               # course_ids =  select(Course).where(Course.course_name.in_(selected_course)).where(Course.university_id.in_(university_ids.university_id)) 
                course_ids = Course.query.filter(Course.course_name.in_(selected_course),Course.university_id.in_(university_ids)).all()
         elif (selected_city):
-                #course_ids = select(Course).where(Course.course_name.in_(selected_course)).where(
-                 #                                 Course.university_id.in_(select(University.university_id).where(University.location.in_(selected_city))))
                  unis = University.query.filter(University.location.in_(selected_city)).all()
                  university_ids.clear()
                  for uni in unis: 
@@ -99,7 +97,6 @@ def update_course_list():
         return jsonify(html_string_selected=html_string_selected)
     
     if(selected_university): 
-        #course_ids = select(Course).where(Course.university_id.in_(select(University.university_id).where(University.university_name.in_(selected_university))))
         course_ids = Course.query.filter(Course.university_id.in_(university_ids)).all()
         for course in course_ids:
             html_string_selected += '<a href="/university/course/{}" class="list-group-item list-group-item-action flex-column align-items-start active"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>'.format(course.course_id,course.course_name,University.query.filter_by(university_id=course.university_id).first().university_name,course.degree,course.cycle)
