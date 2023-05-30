@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
+    <link href="static/style.css" rel="stylesheet" /> 
  
     <div class="centered-blue">
         <h1>{{ university_name }}</h1>
@@ -18,7 +19,7 @@
 
         <div class="list-group" id="course_list">
             {% for course in courses %}
-            <a href="/university/course/{{course.course_name}}" class="list-group-item list-group-item-action flex-column align-items-start active">
+            <a href="{{ url_for('views.course', course_id=course.course_id) }}" class="list-group-item list-group-item-action flex-column align-items-start active">
              <div class="d-flex w-100 justify-content-between">
                <h5  class="mb-1">{{course.course_name}}</h5>
                <small>{{ university_name }}</small>
@@ -33,8 +34,9 @@
     </div>
     
     <footer>
-        <p>&copy; University review system. All rights reserved.</p>
+        <p>&copy; Myśli studenta. All rights reserved.</p>
     </footer>
+<link href="/static/style.css" rel="stylesheet" /> 
 </body>
 </html>
 

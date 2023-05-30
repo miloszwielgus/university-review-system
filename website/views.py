@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template,request,flash,jsonify
+from flask import Blueprint, render_template,request,flash,jsonify,url_for
 from flask_login import login_required,  current_user
 #from . import db
 from .models import *
@@ -8,9 +8,6 @@ from .functions import *
 from sqlalchemy import select
 
 views = Blueprint('views',__name__)
-
-
-
 
 
 @views.route('/')
@@ -133,19 +130,124 @@ def course(course_id):
 
     return render_template('course.html',
                            user=current_user,
-                           course=course,ratings=ratings,avg_rating=avg_rating,number_of_ratings=number_of_ratings,university_name=university_name,users=users)
+                           course=course,course_id=course_id,ratings=ratings,avg_rating=avg_rating,number_of_ratings=number_of_ratings,university_name=university_name,users=users)
 
 @views.route('/university/<string:university_name>')
 def university(university_name):
     courses = Course.query.filter_by(university_id=University.query.filter_by(university_name=university_name).first().university_id)
     website = University.query.filter_by(university_name=university_name).first().website
-    return render_template('university.html',
-                           user=current_user,
-                           university_name = university_name,website = website,
-                           courses=courses)
+    if university:
+        return render_template('university.html',
+                            user=current_user,
+                            university_name = university_name,website = website,
+                            courses=courses)
+    else:
+         flash('University not found', 'error')
+        
+
 
 @views.route('/style.css')
 def style():
     return views.send_static_file('style.css')
 
+
+
+@views.route('/university_list')
+def uni_list():
+    universities = University.query.all()
+    cities = [university.location for university in universities]
+    user=current_user
+    return render_template('uni-list.html', universities=universities, cities=cities, user=user)
+
+@views.route('/_update_university_list', methods=['GET'])
+def update_university_list():
+    selected_city = json.loads(request.args.get('selected_city'))
+    universities = University.query.filter(University.location.in_(selected_city)).all()
+    
+    html_string_selected = ''
+    for university in universities:
+        university_link = url_for('views.university', university_name=university.university_name)
+        html_string_selected += """
+        <div class="list-group-item list-group-item-action flex-column align-items-start active">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1"><a href="{}">{}</a></h5>
+          </div>
+          <p class="mb-1" >Miasto: {}</p>
+          <p class="mb-1">Strona internetowa: <a style="color:black;" href="{}">{}</a></p>
+        </div>
+        """.format(university_link, university.university_name, university.location, university.website, university.website)
+
+    return jsonify(html_string_selected=html_string_selected)
+
+
+@views.route('/compare')
+def compare():
+    # Fetch universities from the database and pass them to the template
+    universities = University.query.all()
+    return render_template('compare_courses.html', universities=universities, user=current_user)
+
+@views.route('/get_courses')
+def get_courses():
+    university_id = request.args.get('universityId')
+    courses = Course.query.filter_by(university_id=university_id).all()
+    courses_data = []
+    for course in courses:
+        course_data = {
+            'course_id': course.course_id,
+            'course_name': course.course_name,
+            'syllabus': course.syllabus,
+            'degree': course.degree,
+            'cycle': course.cycle,
+            'department': course.department
+        }
+        courses_data.append(course_data)
+    return jsonify(courses_data)
+
+@views.route('/compare_courses')
+def compare_courses():
+    university1CourseId = request.args.get('university1CourseId')
+    university2CourseId = request.args.get('university2CourseId')
+
+    # Retrieve the course information from the database
+    course1 = Course.query.get(university1CourseId)
+    course2 = Course.query.get(university2CourseId)
+
+    # Retrieve the university information from the database
+    university1 = University.query.get(course1.university_id)
+    university2 = University.query.get(course2.university_id)
+
+    # Calculate average ratings
+    avg_rating1 = calculate_average_rating(course1)
+    avg_rating2 = calculate_average_rating(course2)
+
+    # Prepare the data to be returned as JSON
+    data = {
+        'course1_name': course1.course_name,
+        'course2_name': course2.course_name,
+        'university1_info': {
+            'university_name': university1.university_name if university1 else None,
+            'city': university1.location if university1 else None,
+            'cycle': course1.cycle,
+            'average_rating': avg_rating1
+        },
+        'university2_info': {
+            'university_name': university2.university_name if university2 else None,
+            'city': university2.location if university2 else None,
+            'cycle': course2.cycle,
+            'average_rating': avg_rating2
+        }
+    }
+
+    return jsonify(data)
+
+
+def calculate_average_rating(course):
+    ratings = Rating.query.filter_by(course_id=course.course_id).all()
+    if ratings:
+        total_ratings = len(ratings)
+        quality_sum = sum(rating.quality_value for rating in ratings)
+        average_rating = quality_sum / total_ratings
+        return average_rating
+    else:
+        return 'Brak opinii'
 
