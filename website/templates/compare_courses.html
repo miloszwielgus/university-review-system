@@ -3,10 +3,12 @@
 {% block title %}Porównaj kierunki{% endblock %}
 
 {% block content %}
+
 <head>
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
+
 <body>
   <div class="container">
     <div class="header">
@@ -19,7 +21,7 @@
         <select class="js-example-basic-single" name="university1" style="width: 90%" id="university1">
           <option value="">Wybierz uczelnię I</option>
           {% for university in universities %}
-            <option value="{{ university.university_id }}">{{ university.university_name }}</option>
+          <option value="{{ university.university_id }}">{{ university.university_name }}</option>
           {% endfor %}
         </select>
       </div>
@@ -28,16 +30,16 @@
         <select class="js-example-basic-single" name="university2" style="width: 90%" id="university2">
           <option value="">Wybierz uczelnię II</option>
           {% for university in universities %}
-            <option value="{{ university.university_id }}">{{ university.university_name }}</option>
+          <option value="{{ university.university_id }}">{{ university.university_name }}</option>
           {% endfor %}
         </select>
       </div>
     </div>
-    
+
 
     <div class="row-comparision-page">
-      <div class="col-md-6" >
-        <label>  Dostępne kierunki dla uczelni I</label>
+      <div class="col-md-6">
+        <label> Dostępne kierunki dla uczelni I</label>
         <select class="js-example-basic-single" name="university1_courses" style="width: 100%" id="university1_courses">
           <!-- Courses from University 1 will be added dynamically here -->
         </select>
@@ -60,11 +62,6 @@
         <h3>Wynik porównania</h3>
         <table class="table table-bordered">
           <thead>
-            <!-- <tr>
-              <th></th>
-              <th>Kierunek 1</th>
-              <th>Kierunek 2</th>
-            </tr> -->
             <tr>
               <th></th>
               <th id="course1_name"></th>
@@ -77,101 +74,107 @@
         </table>
       </div>
     </div>
-    
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-  <script type="text/javascript">
-    $(document).ready(function () {
-      $(".js-example-basic-single").select2();
 
-      $("#compare_btn").on("click", function () {
-        var university1Id = $("#university1").val();
-        var university2Id = $("#university2").val();
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $(".js-example-basic-single").select2();
 
-        if (university1Id === "" || university2Id === "") {
-          alert("Wybierz kierunek dla każdej z uczelni.");
-          return false;
-        }
+        $("#compare_btn").on("click", function () {
+          var university1Id = $("#university1").val();
+          var university2Id = $("#university2").val();
 
-        var university1CourseId = $("#university1_courses").val();
-        var university2CourseId = $("#university2_courses").val();
+          if (university1Id === "" || university2Id === "") {
+            alert("Wybierz kierunek dla każdej z uczelni.");
+            return false;
+          }
 
-        if (university1CourseId === "" || university2CourseId === "") {
-          $("#comparison_result").html("");
-          return;
-        }
+          var university1CourseId = $("#university1_courses").val();
+          var university2CourseId = $("#university2_courses").val();
 
-        $.getJSON("/compare_courses", {
-        university1CourseId: university1CourseId,
-        university2CourseId: university2CourseId
-      })
-      .done(function (data) {
-        $("#course1_name").text(data.course1_name);
-        $("#course2_name").text(data.course2_name);
+          if (university1CourseId === "" || university2CourseId === "") {
+            $("#comparison_result").html("");
+            return;
+          }
 
-        var comparisonHtml = "";
-        comparisonHtml += '<tr>';
-        comparisonHtml += '<td>Uczelnia</td>';
-        comparisonHtml += '<td>' + data.university1_info.university_name + '</td>';
-        comparisonHtml += '<td>' + data.university2_info.university_name + '</td>';
-        comparisonHtml += '</tr>';
+          $.getJSON("/compare_courses", {
+            university1CourseId: university1CourseId,
+            university2CourseId: university2CourseId
+          })
+            .done(function (data) {
+              $("#course1_name").text(data.course1_name);
+              $("#course2_name").text(data.course2_name);
 
-        comparisonHtml += '<tr>';
-        comparisonHtml += '<td>Stopień kształcenia</td>';
-        comparisonHtml += '<td>' + data.university1_info.cycle + '</td>';
-        comparisonHtml += '<td>' + data.university2_info.cycle + '</td>';
-        comparisonHtml += '</tr>';
+              var comparisonHtml = "";
+              comparisonHtml += '<tr>';
+              comparisonHtml += '<td>Uczelnia</td>';
+              comparisonHtml += '<td>' + data.university1_info.university_name + '</td>';
+              comparisonHtml += '<td>' + data.university2_info.university_name + '</td>';
+              comparisonHtml += '</tr>';
 
-        comparisonHtml += '<tr>';
-        comparisonHtml += '<td>Miasto</td>';
-        comparisonHtml += '<td>' + data.university1_info.city + '</td>';
-        comparisonHtml += '<td>' + data.university2_info.city + '</td>';
-        comparisonHtml += '</tr>';
+              comparisonHtml += '<tr>';
+              comparisonHtml += '<td>Stopień kształcenia</td>';
+              comparisonHtml += '<td>' + data.university1_info.cycle + '</td>';
+              comparisonHtml += '<td>' + data.university2_info.cycle + '</td>';
+              comparisonHtml += '</tr>';
 
-        comparisonHtml += '<tr>';
-        comparisonHtml += '<td>Ocena użytkowników</td>';
-        comparisonHtml += '<td>' + data.university1_info.average_rating + '</td>';
-        comparisonHtml += '<td>' + data.university2_info.average_rating + '</td>';
-        comparisonHtml += '</tr>';
+              comparisonHtml += '<tr>';
+              comparisonHtml += '<td>Miasto</td>';
+              comparisonHtml += '<td>' + data.university1_info.city + '</td>';
+              comparisonHtml += '<td>' + data.university2_info.city + '</td>';
+              comparisonHtml += '</tr>';
 
-        $("#comparison_result").html(comparisonHtml);
-      });
-    });
+              comparisonHtml += '<tr>';
+              comparisonHtml += '<td>Ocena użytkowników</td>';
+              comparisonHtml += '<td>' + data.university1_info.average_rating + '</td>';
+              comparisonHtml += '<td>' + data.university2_info.average_rating + '</td>';
+              comparisonHtml += '</tr>';
 
-      $("#university1").on("change", function () {
-        var universityId = $(this).val();
+              comparisonHtml += '<tr>';
+              comparisonHtml += '<td>Liczba opinii</td>';
+              comparisonHtml += '<td>' + data.university1_info.nr_of_ratings + '</td>';
+              comparisonHtml += '<td>' + data.university2_info.nr_of_ratings + '</td>';
+              comparisonHtml += '</tr>';
 
-        $.getJSON("/get_courses", {
-          universityId: universityId
-        })
-        .done(function (data) {
-          var coursesHtml = "";
-          data.forEach(function (course) {
-            coursesHtml += '<option value="' + course.course_id + '">' + course.course_name + '</option>';
-          });
+              $("#comparison_result").html(comparisonHtml);
+            });
+        });
 
-          $("#university1_courses").html(coursesHtml);
+        $("#university1").on("change", function () {
+          var universityId = $(this).val();
+
+          $.getJSON("/get_courses", {
+            universityId: universityId
+          })
+            .done(function (data) {
+              var coursesHtml = "";
+              data.forEach(function (course) {
+                coursesHtml += '<option value="' + course.course_id + '">' + course.course_name + '</option>';
+              });
+
+              $("#university1_courses").html(coursesHtml);
+            });
+        });
+
+        $("#university2").on("change", function () {
+          var universityId = $(this).val();
+
+          $.getJSON("/get_courses", {
+            universityId: universityId
+          })
+            .done(function (data) {
+              var coursesHtml = "";
+              data.forEach(function (course) {
+                coursesHtml += '<option value="' + course.course_id + '">' + course.course_name + '</option>';
+              });
+
+              $("#university2_courses").html(coursesHtml);
+            });
         });
       });
-
-      $("#university2").on("change", function () {
-        var universityId = $(this).val();
-
-        $.getJSON("/get_courses", {
-          universityId: universityId
-        })
-        .done(function (data) {
-          var coursesHtml = "";
-          data.forEach(function (course) {
-            coursesHtml += '<option value="' + course.course_id + '">' + course.course_name + '</option>';
-          });
-
-          $("#university2_courses").html(coursesHtml);
-        });
-      });
-    });
-  </script>
-   <link href="static/style.css" rel="stylesheet" />
+    </script>
+    <link href="/static/style.css" rel="stylesheet" />
 </body>
 {% endblock %}
