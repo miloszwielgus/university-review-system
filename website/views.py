@@ -242,6 +242,34 @@ def compare_courses():
     return jsonify(data)
 
 
+@views.route('/top_universities')
+def top_universities():
+    # Fetch all universities from the database
+    universities = University.query.all()
+
+    # Calculate the average rating for each university's courses and sort by average rating
+    universities_avg_rating = []
+    for university in universities:
+        courses = Course.query.filter_by(university_id=university.university_id).all()
+        total_rating = 0
+        course_count = 0
+        for course in courses:
+            for rating in course.rating:
+                total_rating += rating.quality_value  # Assuming the rating value is stored in the quality_value attribute
+                course_count += 1
+        avg_rating = total_rating / course_count if course_count > 0 else 0
+        universities_avg_rating.append((university, avg_rating))
+
+    # Sort universities by average rating in descending order
+    universities_avg_rating.sort(key=lambda x: x[1], reverse=True)
+
+    # Get the top 5 universities
+    top_universities = universities_avg_rating[:5]
+
+    return render_template('top_universities.html', universities=top_universities, user=current_user)
+
+
+
 def calculate_average_rating(course):
     ratings = Rating.query.filter_by(course_id=course.course_id).all()
     if ratings:
