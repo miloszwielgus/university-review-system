@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Top 5 Universities{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="text-center">Top-5 najlepiej ocenianych uczelni </h1>
+  <table class="table table-striped my-table">
+    <thead>
+      <tr>
+        <th>Uczelnia</th>
+        <th>Średnia ocena</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for university, avg_rating in universities %}
+      <tr>
+        <td><a class="university-link" href="{{ url_for('views.university', university_name=university.university_name) }}">{{ university.university_name }}</a></td>
+        <td>{{ avg_rating }}</td>
+      </tr>
+      {% endfor %}
+      <link href="static/style.css" rel="stylesheet" />
+    </tbody>
+  </table>
+</div>
+{% endblock %}
