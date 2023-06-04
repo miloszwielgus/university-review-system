@@ -19,7 +19,7 @@
 
         <div class="list-group" id="course_list">
             {% for course in courses %}
-            <a href="{{ url_for('views.course', course_id=course.course_id) }}" class="list-group-item list-group-item-action flex-column align-items-start active">
+            <a href="{{ url_for('views.course', course_id=course.course_id, university_name=university_name) }}" class="list-group-item list-group-item-action flex-column align-items-start active">
              <div class="d-flex w-100 justify-content-between">
                <h5  class="mb-1">{{course.course_name}}</h5>
                <small>{{ university_name }}</small>

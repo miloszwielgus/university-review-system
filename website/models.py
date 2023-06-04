@@ -71,11 +71,6 @@ class Rating(db.Model):
     quality_value = db.Column(db.Integer, nullable=False)
     difficulty_value = db.Column(db.Integer, nullable=False)
     rating_description = db.Column(db.String(500))
-
-    
-
-
-
     def __repr__(self):
     
         return '\n rating_id: {0} username: {1} course_id: {2} rating_value: {3} rating_description: {4}'.format(self.rating_id,self.username,self.course_id,

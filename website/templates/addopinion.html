@@ -1,7 +1,53 @@
 {% extends "base.html" %} {% block title %}Dodaj opinie{% endblock %} {% block content %}
-<head></head>
+<head>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+</head>
 <body>
     <h1 style="color: #024959">Dodaj opinie</h1>
+
+    <form id="add_rating" method="post">
+        <label for="review">Opinia:</label><br>
+        <textarea id="review" name="review" rows="4" cols="50"></textarea><br><br>
+
+        <label for="difficulty">Trudność:</label>
+        <select id="difficulty" name="difficulty">
+            <option value="1">1 - bardzo łatwe</option>
+            <option value="2">2 - łatwe</option>
+            <option value="3">3 - średnie</option>
+            <option value="4">4 - trudne</option>
+            <option value="5">5 - bardzo trudne</option>
+        </select><br><br>
+
+        <label for="quality">Jakość nauczania:</label>
+        <select id="quality" name="quality">
+            <option value="1">1 - bardzo zła</option>
+            <option value="2">2 - zła</option>
+            <option value="3">3 - przeciętna</option>
+            <option value="4">4 - dobra</option>
+            <option value="5">5 - fantastyczna</option>
+        </select><br><br>
+        
+        <input type="submit" value="Dodaj opinię" name="submit-button" id="submit-button">
+        
+    </form>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+  
+        $("#submit-button").on("click", function () {
+          var difficulty_rating = $("#difficulty").val();
+          var quality_rating = $("#quality").val(); 
+          var review = $("#review").val();
+            
+          if (review.length <= 10) {
+            alert("Twoja opinia musi być dłuższa niż 10 znaków!");
+            return false;
+          }
+        });    
+      });
+    </script>
+   <link href="/static/style.css" rel="stylesheet"  />
 </body>
-      <link href="static/style.css" rel="stylesheet"  />
 {%endblock%}

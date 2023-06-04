@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template,request,flash,jsonify,url_for
+from flask import Blueprint, render_template,request,flash,jsonify,url_for,redirect
 from flask_login import login_required,  current_user
 #from . import db
 from .models import *
@@ -90,13 +90,21 @@ def update_course_list():
                     university_ids.append(uni.university_id)
                  course_ids = Course.query.filter(Course.course_name.in_(selected_course),Course.university_id.in_(university_ids)).all()
         for course in course_ids:
-            html_string_selected += '<a href="/university/course/{}" class="list-group-item list-group-item-action flex-column align-items-start active"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>'.format(course.course_id,course.course_name,University.query.filter_by(university_id=course.university_id).first().university_name,course.degree,course.cycle)
+            html_string_selected += """<a href="/university/course/{}" 
+            class="list-group-item list-group-item-action flex-column align-items-start active">
+            <div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">
+            Tytuł: {}</p><small>Typ: {}</small></a>""".format(course.course_id,course.course_name,
+            University.query.filter_by(university_id=course.university_id).first().university_name,course.degree,course.cycle)
         return jsonify(html_string_selected=html_string_selected)
     
     if(selected_university): 
         course_ids = Course.query.filter(Course.university_id.in_(university_ids)).all()
         for course in course_ids:
-            html_string_selected += '<a href="/university/course/{}" class="list-group-item list-group-item-action flex-column align-items-start active"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>'.format(course.course_id,course.course_name,University.query.filter_by(university_id=course.university_id).first().university_name,course.degree,course.cycle)
+            html_string_selected += """<a href="/university/course/{}" class="list-group-item list-group-item-action flex-column align-items-start active">
+            <div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}
+            </small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>
+            """.format(course.course_id,
+                       course.course_name,University.query.filter_by(university_id=course.university_id).first().university_name,course.degree,course.cycle)
         return jsonify(html_string_selected=html_string_selected) 
     
     if(selected_city):
@@ -106,7 +114,11 @@ def update_course_list():
             university_ids.append(uni.university_id)
         course_ids = Course.query.filter(Course.university_id.in_(university_ids)).all()
         for course in course_ids:
-            html_string_selected += '<a href="/university/course/{}" class="list-group-item list-group-item-action flex-column align-items-start active"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>'.format(course.course_id,course.course_name,University.query.filter_by(university_id=course.university_id).first().university_name,course.degree,course.cycle)
+            html_string_selected += """<a href="/university/course/{}" 
+            class="list-group-item list-group-item-action flex-column align-items-start active">
+            <div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">
+            Tytuł: {}</p><small>Typ: {}</small></a>""".format(course.course_id,course.course_name,
+            University.query.filter_by(university_id=course.university_id).first().university_name,course.degree,course.cycle)
         return jsonify(html_string_selected=html_string_selected) 
 
     if  (html_string_selected==''):
@@ -114,8 +126,8 @@ def update_course_list():
     
     return jsonify(html_string_selected=html_string_selected)
 
-@views.route('/university/course/<int:course_id>')
-def course(course_id):
+@views.route('/university/<string:university_name>/course/<int:course_id>')
+def course(university_name,course_id):
     ratings = Rating.query.filter_by(course_id=course_id).all()
     course = Course.query.filter_by(course_id = course_id).first()
     university_name = University.query.filter_by(university_id =course.university_id).first().university_name 
@@ -251,3 +263,17 @@ def calculate_average_rating(course):
     else:
         return 'Brak opinii'
 
+@views.route('/university/<string:university_name>/course/<int:course_id>/add-opinion',methods=['POST','GET'])
+def add_opinion(university_name,course_id):
+    if request.method == 'POST':
+        if(not current_user.is_authenticated):
+            return render_template('login.html',user=current_user) 
+        difficulty_rating = request.args.get("difficulty")
+        quality_rating = request.args.get("quality")
+        review = request.args.get("review") 
+        new_rating = Rating(username=current_user.username, course_id=course_id,quality_value=quality_rating,difficulty_value=difficulty_rating,rating_description = review)  #providing the schema for the note 
+        db.session.add(new_rating) #adding the rating to the database 
+        db.session.commit()
+        return redirect(url_for('views.course',university_name=university_name,course_id=course_id))
+
+    return render_template('addopinion.html',user=current_user)
