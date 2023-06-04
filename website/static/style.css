@@ -212,3 +212,59 @@ body {
 a.university-link {
   color: #024959;
 }
+
+
+/*about us*/
+  .top-strip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    margin-top: 50px;
+    color: white;
+    z-index: 1;
+
+  }
+
+    .top-strip h1 {
+      margiN : 0;
+      color: #ffffff;
+      display:block;
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .top-strip svg {
+      display: block;
+    }
+    .info {
+    margin-top: 215px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    color: #012E40;
+      font-size: 20px;
+  }
+
+  .uppercase {
+    text-transform: uppercase;
+    font-size: 30px;
+    font-weight: bold;
+   color: #024959;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+  }
+  .video {
+  justify-content: center;
+    color: #3CA6A6;
+  }
+
+

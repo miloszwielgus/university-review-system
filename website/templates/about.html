@@ -1,82 +1,46 @@
 {% extends "base.html" %} {% block title %}About{% endblock %} {% block content %}
 <head>
 
-  <style>
- .top-strip {
-
-   position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      text-align: center;
-      margin-top: 50px;
-    text-align: center;
-
-      color: white;
-
-    }
-
-    .top-strip h1 {
-      margin-top: -280px;
-      color: #ffffff;
-    }
-
-    .top-strip svg {
-      display: block;
-    }
-    .video {
-      margin-top: 20px;
-    }
-    .info{
-      margin-top: 215px;
-
-    }
-  </style>
 
 </head>
 <body>
-
+  <div class="bg-custom"></div>
   <div class="top-strip">
 
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 319">
 
       <path fill="#3CA6A6" fill-opacity="1" d="M0,256L48,224C96,192,192,128,288,133.3C384,139,480,213,576,202.7C672,192,768,96,864,96C960,96,1056,192,1152,229.3C1248,267,1344,245,1392,234.7L1440,224L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path>
       </svg>
       <h1>Myśli Studenta</h1>
   </div>
-<div class="info">
 
-  <h1>Przed Tobą niezbędnik każdego maturzysty !</h1>
-  <p>
-    Wtem przybiegł Agamemnon³⁴² i z zapałem rzecze:
-— «O słaby woగowniku! O miękki człowiecze!
-Tyż³⁴³ nikczemneగ litości możesz teraz użyć!
-Musieli ci się dobrze Troగanie zasłużyć.
-Niechaగ zdraగcy trupami naszą legną ǳidą, Zemsta, Śmierć
-Niech ǳieci z łona matek na łup śmierci idą,
-Niech z hańbą, bez pogrzebu, wyginą Troగanie,
-I niechaగ po nich nawet śladu nie zostanie!»
-Rzekł i odmienił brata: గuż gniewem oddycha,
-Więc próżno żebrzącego Adrasta odpycha,
-Agamemnon zaś w piersiach ǳidę mu utopił.
-Konaగący padł na wznak i krwią ziemię skropił,
-Król wyrwał pocisk, trupa nastąpiwszy nogą.
-Wtedy się z taką Nestor³⁴⁴ oǳywa przestrogą:
-— «Rycerze! Boga woగny uczniowie, Danaగe³⁴⁵!
-Niechaగ mi się z was żaden w tyle nie zostaగe,
-By przyszedł do naw³⁴⁶ mnogim obciążony łupem.
-Usiłuగmy słać teraz nieprzyగaciół trupem;
-Potem, gdy గuż Troగanie przestaną nacierać,
-Bęǳiecie, podług woli, zdobycze oǳierać».
-Tymi słowy zapala umysł boగu chciwy³⁴⁷
-  </p>
-</div>
-  <div class="video">
-<h1>Dobra serduszka, tutaj bedzie nasz filmik :) tylko trzeba go nagrac! A do kodzenia posluchajcie sobie muzyczki na razie</h1>
-      <iframe width="560" height="315" src="https://www.youtube.com/embed/y654TxcRuL0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  <div class="info">
+    <p>
+      <span class="uppercase">DLA KOGO?</span><br>
+      Jeśli jesteś po maturze i chcesz studiować, jeśli chcesz zmienić kierunek lub zacząć kolejny to ta strona jest właśnie dla ciebie!
+    </p>
+    <p>
+      Zdecydowaliśmy o stworzeniu naszej strony z myślą o takich osobach jak Ty. Rozumiemy twoje dylematy i dlatego stworzyliśmy Myśli Studenta - miejsce, które pomoże Ci wybrać TWÓJ kierunek.
+    </p>
+    <p>
+      <span class="uppercase">CO TU ZNAJDZIESZ</span><br>
+      Znajdziesz tutaj bazę uczelni i kierunków z całej Polski. Są one oceniane przez swoich absolwentów. Możesz je porównywać między sobą. Zobaczysz jaki tytuł uzyskasz po danym kierunku, jaką dostał średnią ocenę, ile osób go oceniło. Nie musisz już osobno szukać strony internetowej każdej uczelni - podlinkowaliśmy je za ciebie!
+    </p>
+    <p>
+      Wybór studiów nie musi być trudny! Dołącz do Myśli Studenta
+    </p>
+    <p>
+      <span class="uppercase">ABSOLWENCIE!</span><br>
+      Jesteś absolwentem studiów w Polsce? Jeśli tak to zapraszamy cię do zostawienia swojej opinii. Każdy punkt widzenia jest ważny. Niezależnie od tego, czy uważasz, że twój kierunek był przeciętny, beznadziejny lub wyjątkowy, zachęcamy Cię do zostawienia swojej opinii.
+    </p>
   </div>
 
-<link href="static/style.css" rel="stylesheet" />
+  <div class="video">
+    <h1>Dobra serduszka, miłego oglądania!!!</h1>
+          <iframe width="800" height="450" src="https://www.youtube.com/embed/VdD_rum_BW8" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+
+ <link href="/static/style.css" rel="stylesheet" />
 </body>
 {%endblock%}
 
