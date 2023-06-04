@@ -18,12 +18,10 @@ body {
   color: #024959;
 }
 
-.button-compare button{
+.button-compare button {
   position: relative;
   top: 15px;
-  /* Adjust the value as per your requirement */
   right: -500px;
-  /* Adjust the value as per your requirement */
   background-color: #026773;
   color: #fff;
   padding: 10px 20px;
@@ -31,7 +29,8 @@ body {
   border-radius: 4px;
 
 }
-.row-comparision-page label{
+
+.row-comparision-page label {
   font-size: 16px;
   color: #024959;
   font-family: Arial, sans-serif;
@@ -39,20 +38,20 @@ body {
 
 }
 
-.row label{
+.row label {
   font-size: 20px;
   color: #024959;
   font-family: Arial, sans-serif;
 
 }
 
-.row h3{
+.row h3 {
   font-size: 20px;
   color: #024959;
   font-family: Arial, sans-serif;
 
 }
-/* Override font style for the select elements */
+
 .select2-container .select2-selection--multiple,
 .select2-container--default .select2-selection--multiple {
   font-family: Arial, sans-serif;
@@ -60,7 +59,6 @@ body {
   color: #024959;
 }
 
-/* Override font style for the button */
 #process_input {
   font-family: HelveticaNeue, arial;
   font-size: 14px;
@@ -71,7 +69,6 @@ body {
   padding: 10px 20px;
 }
 
-/* Override font style for the course list items */
 .list-group-item h5 {
   font-family: Arial, sans-serif;
   font-size: 18px;
@@ -116,7 +113,7 @@ body {
 }
 
 .list-group-item.active {
-  background-color:  #f9f2e9;
+  background-color: #f9f2e9;
   color: #fff;
 }
 
@@ -148,9 +145,7 @@ body {
 .move-button {
   position: relative;
   top: -10px;
-  /* Adjust the value as per your requirement */
   right: 10px;
-  /* Adjust the value as per your requirement */
 }
 
 .list-group-item h5:hover {
@@ -197,6 +192,23 @@ body {
 }
 
 .list-group-item.active:hover {
-  background-color:  #f9f2e9;
+  background-color: #f9f2e9;
   color: #fff;
+}
+
+/*css for university ranking*/
+
+.my-table {
+  background-color: #f9f2e9;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+}
+
+.my-table th {
+  color: #024959;
+  font-weight: bold;
+}
+
+a.university-link {
+  color: #024959;
 }
