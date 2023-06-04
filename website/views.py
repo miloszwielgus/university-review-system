@@ -132,14 +132,10 @@ def course(university_name,course_id):
     course = Course.query.filter_by(course_id = course_id).first()
     university_name = University.query.filter_by(university_id =course.university_id).first().university_name 
     users = User.query.all()
-    avg_rating = 0
-    number_of_ratings = 0               #to do: implement a better mechanism for avg_rating (it should be stored somewhere and updated)
-    for rating in ratings:
-        avg_rating += (rating.quality_value + rating.difficulty_value)
-        number_of_ratings += 1 
-    if number_of_ratings != 0:
-        avg_rating /= (number_of_ratings*2) 
-
+    avg_rating = calculate_average_rating(course)
+    ratings = Rating.query.filter_by(course_id=course_id).all()
+    number_of_ratings = len(ratings)            #to do: implement a better mechanism for avg_rating (it should be stored somewhere and updated)
+   
     return render_template('course.html',
                            user=current_user,
                            course=course,course_id=course_id,ratings=ratings,avg_rating=avg_rating,number_of_ratings=number_of_ratings,university_name=university_name,users=users)
@@ -240,17 +236,47 @@ def compare_courses():
             'university_name': university1.university_name if university1 else None,
             'city': university1.location if university1 else None,
             'cycle': course1.cycle,
-            'average_rating': avg_rating1
+            'average_rating': avg_rating1,
+            'nr_of_ratings':len(Rating.query.filter_by(course_id=course1.course_id).all())
         },
         'university2_info': {
             'university_name': university2.university_name if university2 else None,
             'city': university2.location if university2 else None,
             'cycle': course2.cycle,
-            'average_rating': avg_rating2
+            'average_rating': avg_rating2,
+            'nr_of_ratings': len(Rating.query.filter_by(course_id=course2.course_id).all())
         }
     }
 
     return jsonify(data)
+
+
+@views.route('/top_universities')
+def top_universities():
+    # Fetch all universities from the database
+    universities = University.query.all()
+
+    # Calculate the average rating for each university's courses and sort by average rating
+    universities_avg_rating = []
+    for university in universities:
+        courses = Course.query.filter_by(university_id=university.university_id).all()
+        total_rating = 0
+        course_count = 0
+        for course in courses:
+            for rating in course.rating:
+                total_rating += rating.quality_value  # Assuming the rating value is stored in the quality_value attribute
+                course_count += 1
+        avg_rating = total_rating / course_count if course_count > 0 else 0
+        universities_avg_rating.append((university, avg_rating))
+
+    # Sort universities by average rating in descending order
+    universities_avg_rating.sort(key=lambda x: x[1], reverse=True)
+
+    # Get the top 5 universities
+    top_universities = universities_avg_rating[:5]
+
+    return render_template('top_universities.html', universities=top_universities, user=current_user)
+
 
 
 def calculate_average_rating(course):
