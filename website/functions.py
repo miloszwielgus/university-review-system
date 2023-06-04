@@ -78,3 +78,5 @@ def send_email(sender_email, sender_password, recipient_email, subject, message)
     finally:
         # Close the SMTP server connection
         server.quit()
+
+

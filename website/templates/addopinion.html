@@ -5,7 +5,7 @@
 <body>
     <h1 style="color: #024959">Dodaj opinie</h1>
 
-    <form id="add_rating" method="post">
+    <form id="add_rating" method="post" data-university-name="{{ university_name }}" data-course-id="{{ course_id }}">
         <label for="review">Opinia:</label><br>
         <textarea id="review" name="review" rows="4" cols="50"></textarea><br><br>
 
@@ -37,13 +37,42 @@
       $(document).ready(function () {
   
         $("#submit-button").on("click", function () {
+          event.preventDefault();
+          var form = $("#add_rating");
+          var university_name = form.data("university-name");
+          var course_id = form.data("course-id");
           var difficulty_rating = $("#difficulty").val();
-          var quality_rating = $("#quality").val(); 
+          var quality_rating = $("#quality").val();
           var review = $("#review").val();
-            
+          var form_data = new FormData($("#add_rating")[0]);
+          form_data.append("university_name", university_name);
+          form_data.append("course_id", course_id );
+          form_data.append("difficulty_value", difficulty_rating);
+          form_data.append("quality_value", quality_rating);
+          form_data.append("review", review);
           if (review.length <= 10) {
             alert("Twoja opinia musi być dłuższa niż 10 znaków!");
             return false;
+          }
+          else{
+            $.ajax({
+              url: "{{ url_for('views.add_opinion') }}",
+              type: "POST",
+              data: form_data,
+              processData: false,
+              contentType: false,
+              success: function(response) {
+                console.log(response);
+              },
+               success: function(response) {
+                 // Handle the response from the Python script
+                 window.location.href = "{{ url_for('views.course',university_name=university_name,course_id=course_id) }}";
+               },
+               error: function(xhr) {
+                 // Handle any error that occurred during the request
+                 console.error(xhr.statusText);
+               }
+    });
           }
         });    
       });
