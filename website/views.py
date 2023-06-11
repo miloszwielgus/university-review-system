@@ -285,12 +285,17 @@ def calculate_average_rating(course):
         total_ratings = len(ratings)
         quality_sum = sum(rating.quality_value for rating in ratings)
         average_rating = quality_sum / total_ratings
-        return average_rating
+        return round(average_rating,2)
     else:
         return 'Brak opinii'
 
 @views.route('/university/<string:university_name>/course/<int:course_id>/add-opinion',methods=['POST','GET'])
 def add_opinion_page(course_id,university_name):
+    if(not current_user.is_authenticated):
+                return render_template('login.html',user=current_user) 
+    if(Rating.query.filter(Rating.course_id == course_id,Rating.username == current_user.username).first()):
+                flash("Dodałeś już opinię na temat tego kursu","error")
+                return redirect(url_for('views.course',university_name=university_name,course_id=course_id))
     return render_template('addopinion.html',user=current_user,course_id=course_id,university_name=university_name)
 
 @views.route('/_add_opinion',methods=['POST'])
@@ -299,11 +304,13 @@ def add_opinion():
             if(not current_user.is_authenticated):
                 return render_template('login.html',user=current_user) 
             university_name=request.form.get('university_name')
-            course_id=request.form.get('course_id')
+            course_id=request.form.get('course_id') 
             review=request.form.get('review')
             difficulty_value=request.form.get('difficulty_value')
             quality_value=request.form.get('quality_value')
-            print(university_name)
+            if(Rating.query.filter(Rating.course_id == course_id,Rating.username == current_user.username).first()):
+                flash("Dodałeś już opinię na temat tego kursu","error")
+                return redirect(url_for('views.course',university_name=university_name,course_id=course_id))
             new_rating = Rating(username=current_user.username, course_id=course_id,quality_value=quality_value,difficulty_value=difficulty_value,rating_description = review)  #providing the schema for the note 
             db.session.add(new_rating) #adding the rating to the database 
             db.session.commit()
