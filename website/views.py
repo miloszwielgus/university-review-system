@@ -1,14 +1,25 @@
-from flask import Blueprint, render_template,request,flash,jsonify,url_for,redirect
+from flask import Blueprint, render_template,request,flash,jsonify,url_for,redirect, session
 from flask_login import login_required,  current_user
 #from . import db
-from .models import *
+from .models import * 
+import redis
 import json
 from flask_cors import cross_origin 
 from .functions import *
-from sqlalchemy import select
+from sqlalchemy import select 
+from . import usosapi
 
 views = Blueprint('views',__name__)
 
+global_auth_object = None
+
+def get_auth_object(base_url):
+    global global_auth_object
+
+    if global_auth_object is None:
+        # If auth_object is not set, create a new instance
+         global_auth_object=usosapi.USOSAPIConnection(base_url,"4ACHmqpSV88bw7fZJANQ","XNeZCccybLfteDAxBYcFe89q4pvsuXgvL5Ah8sH4")
+    return global_auth_object
 
 @views.route('/')
 def index():
@@ -90,20 +101,20 @@ def update_course_list():
                     university_ids.append(uni.university_id)
                  course_ids = Course.query.filter(Course.course_name.in_(selected_course),Course.university_id.in_(university_ids)).all()
         for course in course_ids:
-            html_string_selected += """<a href="/university/course/{}" 
+            html_string_selected += """<a href="/university/{}/course/{}"
             class="list-group-item list-group-item-action flex-column align-items-start active">
             <div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">
-            Tytuł: {}</p><small>Typ: {}</small></a>""".format(course.course_id,course.course_name,
+            Tytuł: {}</p><small>Typ: {}</small></a>""".format(University.query.filter_by(university_id=course.university_id).first().university_name,course.course_id,course.course_name,
             University.query.filter_by(university_id=course.university_id).first().university_name,course.degree,course.cycle)
         return jsonify(html_string_selected=html_string_selected)
     
     if(selected_university): 
         course_ids = Course.query.filter(Course.university_id.in_(university_ids)).all()
         for course in course_ids:
-            html_string_selected += """<a href="/university/course/{}" class="list-group-item list-group-item-action flex-column align-items-start active">
+            html_string_selected += """<a href="/university/{}/course/{}" class="list-group-item list-group-item-action flex-column align-items-start active">
             <div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}
             </small></div><p class="mb-1">Tytuł: {}</p><small>Typ: {}</small></a>
-            """.format(course.course_id,
+            """.format(University.query.filter_by(university_id=course.university_id).first().university_name,course.course_id,
                        course.course_name,University.query.filter_by(university_id=course.university_id).first().university_name,course.degree,course.cycle)
         return jsonify(html_string_selected=html_string_selected) 
     
@@ -114,10 +125,10 @@ def update_course_list():
             university_ids.append(uni.university_id)
         course_ids = Course.query.filter(Course.university_id.in_(university_ids)).all()
         for course in course_ids:
-            html_string_selected += """<a href="/university/course/{}" 
+            html_string_selected += """<a href="/university/{}/course/{}" 
             class="list-group-item list-group-item-action flex-column align-items-start active">
             <div class="d-flex w-100 justify-content-between"><h5 class="mb-1">{}</h5><small>{}</small></div><p class="mb-1">
-            Tytuł: {}</p><small>Typ: {}</small></a>""".format(course.course_id,course.course_name,
+            Tytuł: {}</p><small>Typ: {}</small></a>""".format(University.query.filter_by(university_id=course.university_id).first().university_name,course.course_id,course.course_name,
             University.query.filter_by(university_id=course.university_id).first().university_name,course.degree,course.cycle)
         return jsonify(html_string_selected=html_string_selected) 
 
@@ -285,13 +296,46 @@ def calculate_average_rating(course):
         total_ratings = len(ratings)
         quality_sum = sum(rating.quality_value for rating in ratings)
         average_rating = quality_sum / total_ratings
-        return average_rating
+        return round(average_rating,2)
     else:
         return 'Brak opinii'
 
 @views.route('/university/<string:university_name>/course/<int:course_id>/add-opinion',methods=['POST','GET'])
 def add_opinion_page(course_id,university_name):
+    if(not current_user.is_authenticated):
+                return render_template('login.html',user=current_user) 
+    if(Rating.query.filter(Rating.course_id == course_id,Rating.username == current_user.username).first()):
+                flash("Dodałeś już opinię na temat tego kursu","error")
+                return redirect(url_for('views.course',university_name=university_name,course_id=course_id))
     return render_template('addopinion.html',user=current_user,course_id=course_id,university_name=university_name)
+
+@views.route('/university/<string:university_name>/course/<int:course_id>/add-opinion/verify_review')
+def verify_review(course_id,university_name): 
+    base_url = University.query.filter_by(university_name=university_name).first().api_url
+    auth_object = get_auth_object(base_url)
+    auth_object._generate_request_token() 
+    auth_url = auth_object.get_authorization_url() 
+    return render_template('verify_review.html',course_id=course_id,university_name=university_name,user=current_user,auth_url=auth_url,auth_object=auth_object)
+    
+
+@views.route('/_process_pin',methods=['POST'])
+def process_pin(): 
+        pin = request.form.get('pin_input') 
+        course_id = request.form.get('course_id') 
+        university_name = request.form.get('university_name')
+        auth_object = get_auth_object('base_url')
+        auth_object.authorize_with_pin(pin) 
+        curr = auth_object.get('services/progs/student',active_only='false',old_programs='false')
+        json_string = json.dumps(curr)
+        course_code = json.loads(json_string)
+        course_code = course_code[0]['programme']['id']
+        if course_code == Course.query.filter_by(course_id=course_id).first().code:
+             rating = Rating.query.filter(Rating.course_id == course_id, Rating.username == current_user.username).first()
+             print(rating.is_verified)
+             rating.is_verified = 1
+             db.session.commit()
+        response = url_for('views.course',course_id=course_id,university_name=university_name)
+        return response
 
 @views.route('/_add_opinion',methods=['POST'])
 def add_opinion():
@@ -299,12 +343,18 @@ def add_opinion():
             if(not current_user.is_authenticated):
                 return render_template('login.html',user=current_user) 
             university_name=request.form.get('university_name')
-            course_id=request.form.get('course_id')
+            course_id=request.form.get('course_id') 
             review=request.form.get('review')
             difficulty_value=request.form.get('difficulty_value')
             quality_value=request.form.get('quality_value')
-            print(university_name)
-            new_rating = Rating(username=current_user.username, course_id=course_id,quality_value=quality_value,difficulty_value=difficulty_value,rating_description = review)  #providing the schema for the note 
+            new_rating = Rating(username=current_user.username, course_id=course_id,quality_value=quality_value,difficulty_value=difficulty_value,rating_description = review,is_verified = 0)  #providing the schema for the note 
             db.session.add(new_rating) #adding the rating to the database 
-            db.session.commit()
-            return redirect(url_for('views.course',university_name=university_name,course_id=course_id))
+            db.session.commit() 
+            api_url = University.query.filter_by(university_name=university_name).first().api_url 
+            course_url = url_for('views.course',university_name=university_name,course_id=course_id)
+            if api_url:
+             
+             redirection_url = url_for('views.verify_review',course_id=course_id,university_name=university_name)
+             return redirection_url
+            else:
+                 return course_url
