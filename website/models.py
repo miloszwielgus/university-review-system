@@ -23,7 +23,8 @@ class University(db.Model):
     university_id = db.Column(db.Integer, primary_key=True)
     university_name = db.Column(db.String(100), nullable=False)
     location = db.Column(db.String(50), nullable=False)
-    website = db.Column(db.String(100), nullable=False)
+    website = db.Column(db.String(100), nullable=False) 
+    api_url = db.Column(db.String(50))
     course = relationship("Course",backref = "University")
 
 
@@ -46,7 +47,8 @@ class Course(db.Model):
     university_id = db.Column(db.Integer, db.ForeignKey('university.university_id'), nullable=False)
     degree = db.Column(db.String(100), nullable=False)
     cycle = db.Column(db.String(100), nullable=False) 
-    department = db.Column(db.String(100))
+    department = db.Column(db.String(100)) 
+    code = db.Column(db.String(50))
     rating = relationship("Rating",backref="Course")
 
     def __repr__(self):
@@ -70,7 +72,8 @@ class Rating(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey('course.course_id'), nullable=False)
     quality_value = db.Column(db.Integer, nullable=False)
     difficulty_value = db.Column(db.Integer, nullable=False)
-    rating_description = db.Column(db.String(500))
+    rating_description = db.Column(db.String(500)) 
+    is_verified = db.Column(db.Integer)
     def __repr__(self):
     
         return '\n rating_id: {0} username: {1} course_id: {2} rating_value: {3} rating_description: {4}'.format(self.rating_id,self.username,self.course_id,
@@ -81,18 +84,18 @@ class Rating(db.Model):
        return '\n rating_id: {0} username: {1} course_id: {2} rating_value: {3} rating_description: {4}'.format(self.rating_id,self.username,self.course_id,self.quality_value,self.rating_description)
 
 class ChildCourse(ModelView):
-    column_list = ['course_id', 'course_name', 'syllabus','university_id','degree','cycle','department']
-    form_columns = ['course_name', 'syllabus','university_id','degree','cycle','department']
+    column_list = ['course_id', 'course_name', 'syllabus','university_id','degree','cycle','department','code']
+    form_columns = ['course_name', 'syllabus','university_id','degree','cycle','department','code']
 
 class ChildRating(ModelView):
-    column_list = ['rating_id','username','course_id', 'quality_value','difficulty_value','rating_description']
-    form_columns = ['username','course_id', 'quality_value','difficulty_value','rating_description']
+    column_list = ['rating_id','username','course_id', 'quality_value','difficulty_value','rating_description','is_verified']
+    form_columns = ['username','course_id', 'quality_value','difficulty_value','rating_description','is_verified']
 
 class ChildUser(ModelView):
     column_list = ['id', 'email', 'password','username']
     form_columns =  ['email', 'password','username']      
 
 class ChildUniversity(ModelView):
-    column_list = ['university_id', 'university_name', 'location','website'] 
-    form_columns = [ 'university_name', 'location','website']
+    column_list = ['university_id', 'university_name', 'location','website','api_url'] 
+    form_columns = [ 'university_name', 'location','website','api_url']
 
