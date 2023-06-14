@@ -3,7 +3,8 @@ from flask_login import UserMixin
 from sqlalchemy.sql import func
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship 
+from .admin import AdminView
 
 
 
@@ -13,6 +14,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(150),unique=True)
     password = db.Column(db.String(150)) 
     username = db.Column(db.String(150))
+    is_admin = db.Column(db.Integer)
 
     rating = relationship("Rating",backref="user")
     
@@ -82,20 +84,26 @@ class Rating(db.Model):
     def __str__(self):
 
        return '\n rating_id: {0} username: {1} course_id: {2} rating_value: {3} rating_description: {4}'.format(self.rating_id,self.username,self.course_id,self.quality_value,self.rating_description)
+    
+  
 
-class ChildCourse(ModelView):
+
+
+class ChildCourse(AdminView):
     column_list = ['course_id', 'course_name', 'syllabus','university_id','degree','cycle','department','code']
     form_columns = ['course_name', 'syllabus','university_id','degree','cycle','department','code']
 
-class ChildRating(ModelView):
+    
+
+class ChildRating(AdminView):
     column_list = ['rating_id','username','course_id', 'quality_value','difficulty_value','rating_description','is_verified']
     form_columns = ['username','course_id', 'quality_value','difficulty_value','rating_description','is_verified']
 
-class ChildUser(ModelView):
-    column_list = ['id', 'email', 'password','username']
-    form_columns =  ['email', 'password','username']      
+class ChildUser(AdminView):
+    column_list = ['id', 'email', 'password','username','is_admin']
+    form_columns =  ['email', 'password','username','is_admin']      
 
-class ChildUniversity(ModelView):
+class ChildUniversity(AdminView):
     column_list = ['university_id', 'university_name', 'location','website','api_url'] 
     form_columns = [ 'university_name', 'location','website','api_url']
 
