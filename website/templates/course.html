@@ -155,17 +155,17 @@
 
       </div>
       <div class="col-md-4">
-        <h2 class="rating-title">Rating Breakdown</h2>
+        <h2 class="rating-title">Ocena nauczania</h2>
         <div class="rating-breakdown">
           <div class="progress">
-            <div class="progress-bar bg-success" role="progressbar" style="width: 85%;" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">Jakość nauczania</div>
+            <div class="progress-bar bg-success" role="progressbar" style="width: {{ avg_quality_value }}%; color:black;" aria-valuenow="{{ avg_quality_value }}" aria-valuemin="0" aria-valuemax="100">Jakość nauczania</div>
           </div>
           <div class="progress">
-            <div class="progress-bar bg-info" role="progressbar" style="width: 90%;" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">Clarity</div>
+            <div class="progress-bar bg-info" role="progressbar" style="width: {{ avg_difficulty_value }}%; color:black;" aria-valuenow="{{ avg_difficulty_value }}" aria-valuemin="0" aria-valuemax="100">Trudność</div>
           </div>
         </div>
 
-        <h2 class="rating-title">Ocena jakości:</h2>
+        <h2 class="rating-title">Ocena kierunku:</h2>
         <p class="display-4">{{avg_rating}}/5
           <p class="no-of-ratings">Na podstawie {{number_of_ratings}} opinii</p>
         </p>

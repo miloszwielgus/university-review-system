@@ -8,7 +8,7 @@ from flask_cors import cross_origin
 from .functions import *
 from sqlalchemy import select 
 from . import usosapi
-
+from .functions import calculate_average_difficulty_value, calculate_average_quality_value, calculate_average_rating
 views = Blueprint('views',__name__)
 
 global_auth_object = None
@@ -145,11 +145,14 @@ def course(university_name,course_id):
     users = User.query.all()
     avg_rating = calculate_average_rating(course)
     ratings = Rating.query.filter_by(course_id=course_id).all()
-    number_of_ratings = len(ratings)            #to do: implement a better mechanism for avg_rating (it should be stored somewhere and updated)
+    number_of_ratings = len(ratings)  
+    avg_quality_value = (100*calculate_average_quality_value(course))/5
+    avg_difficulty_value = (100*calculate_average_difficulty_value(course))/5
    
     return render_template('course.html',
                            user=current_user,
-                           course=course,course_id=course_id,ratings=ratings,avg_rating=avg_rating,number_of_ratings=number_of_ratings,university_name=university_name,users=users)
+                           course=course,course_id=course_id,ratings=ratings,avg_rating=avg_rating,number_of_ratings=number_of_ratings,university_name=university_name,users=users, avg_quality_value=avg_quality_value,
+                           avg_difficulty_value=avg_difficulty_value)
 
 @views.route('/university/<string:university_name>')
 def university(university_name):
@@ -289,17 +292,6 @@ def top_universities():
     return render_template('top_universities.html', universities=top_universities, user=current_user)
 
 
-
-def calculate_average_rating(course):
-    ratings = Rating.query.filter_by(course_id=course.course_id).all()
-    if ratings:
-        total_ratings = len(ratings)
-        quality_sum = sum(rating.quality_value for rating in ratings)
-        average_rating = quality_sum / total_ratings
-        return round(average_rating,2)
-    else:
-        return 'Brak opinii'
-
 @views.route('/university/<string:university_name>/course/<int:course_id>/add-opinion',methods=['POST','GET'])
 def add_opinion_page(course_id,university_name):
     if(not current_user.is_authenticated):
@@ -358,3 +350,5 @@ def add_opinion():
              return redirection_url
             else:
                  return course_url
+
+
