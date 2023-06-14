@@ -267,4 +267,11 @@ a.university-link {
     color: #3CA6A6;
   }
 
+  .verification
+  {
+    position: absolute;
+    bottom: 20px;
+    left: 500px;
+  }
+
 
