@@ -5,8 +5,20 @@ Please acknowledge the original authors if you use or modify this code.
 -->
 {% extends "base.html" %} {% block title %}About{% endblock %} {% block content %}
 <head>
-
-
+<style>
+    .button {
+            background-color: #026773;
+            border: none;
+            color: #ffffff;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            margin: -15px 2px;
+            cursor: pointer;
+            border-radius: 16px;
+        }
+</style>
 </head>
 <body>
   <div class="bg-custom"></div>
@@ -44,9 +56,16 @@ Please acknowledge the original authors if you use or modify this code.
           <iframe width="800" height="450" src="https://www.youtube.com/embed/VdD_rum_BW8" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
 
+
+  <h1 style = "color: #026773;">Zadaj pytanie</h1>
+    <form id="ask_question" method="post" action="/send_question">
+        <label for="email" style = "color: #026773;">Podaj swój email:</label><br>
+        <input type="email" id="email" name="email" required placeholder="Twój adres e-mail"><br><br>
+        <label for="question-text" style = "color: #026773;">Pytanie:</label><br>
+        <textarea id="question-text" name="question" rows="4" cols="50" required placeholder="Twoje pytanie"></textarea><br><br>
+        <input class = button type="submit" value="Zadaj pytanie" name="submit-button" id="submit-button">
+    </form>
+
  <link href="/static/style.css" rel="stylesheet" />
 </body>
 {%endblock%}
-
-
-
