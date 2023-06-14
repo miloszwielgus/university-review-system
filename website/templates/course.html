@@ -27,7 +27,7 @@
       color: #012E40;
       font-size: 24px;
       font-weight: bold;
-    } */
+    }
 
     .course-name {
       font-family: Verdana,serif;
@@ -148,6 +148,12 @@
           <div class="card-body">
             <h5 class="card-title">{{rating.username}}</h5>
             <p class="card-text">{{rating.rating_description}}</p>
+            {% if rating.is_verified == 1 %}
+               <div class="verification">
+                <img src="{{ url_for('static', filename='check.svg') }}" width="40%" height="40%" style="position: absolute; bottom: 30px; left: 500px;">
+                   <div style="position: absolute; bottom: 10px; left: 570px; font-size: 12px">Opinia zweryfikowana</div>
+               </div>
+            {% endif %}
           </div>
         </div>
         {% endfor %}
