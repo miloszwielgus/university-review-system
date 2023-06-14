@@ -1,3 +1,8 @@
+"""
+This file is a part of the University Review System project.
+https://github.com/miloszwielgus/university-review-system
+Please acknowledge the original authors if you use or modify this code.
+"""
 from flask_admin.contrib.sqla import ModelView
 from flask import session, redirect, url_for, request 
 from flask_login import current_user 
