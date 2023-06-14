@@ -7,7 +7,10 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for
 from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
-from flask_login import login_user, login_required, logout_user, current_user 
+from flask_login import login_user, login_required, logout_user, current_user
+from flask import Flask, request
+from flask_mail import Mail, Message
+from flask_login import login_user, login_required, logout_user, current_user
 from .functions import *
 
 
@@ -48,7 +51,7 @@ def login():
 def logout():
     """
     Handles the logout functionality.
-    
+
     Logs out the currently logged-in user and redirects to the login page.
     """
     logout_user()
@@ -59,7 +62,7 @@ def logout():
 def sign_up():
     """
     Handles the user registration functionality.
-    
+
     Retrieves the email, username, and passwords from the user.
     It checks if the email and username are already taken and validates the input data.
     If everything is valid, a new user is created and added to the database.
@@ -94,8 +97,8 @@ def sign_up():
             flash('Account created!',category='success')
             send_email("max11@spoko.pl","",email,"Dziękujemy za rejestrację",f"Dziekujemy za rejestracje na portalu MyśliStudenta, twój nick to: {username}")
             return redirect(url_for('views.index'))
-        
-            
+
+
     return render_template("sign_up.html",user=current_user)
 
 
@@ -119,3 +122,16 @@ def add_opinion():
     return render_template("addopinion.html", user=current_user)
 
 
+@auth.route("/send_question", methods=["POST"])
+def send_question():
+    # Get form data
+    sender_email = "testa@onet.pl"  # Tu podaj swój adres email
+    sender_password = "Dorotazlimanowej1!"  # Tu podaj hasło do swojego konta email
+    recipient_email = "izka.golec@gmail.com"  # Adres e-mail odbiorcy (zmieniony na izka.golec@gmail.com)
+    subject = "Pytanie od: " + request.form["email"]
+    message = request.form["question"]
+
+    # Send email
+    send_email(sender_email, sender_password, recipient_email, subject, message)
+
+    return "Pytanie zostało wysłane."

@@ -8,6 +8,8 @@ from .models import University,Course,Rating
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from flask import Flask, request
+from flask_mail import Mail, Message
 
 def get_university_values():
     """
@@ -135,3 +137,4 @@ def calculate_average_rating(course):
         return round(average_rating,2)
     else:
         return 'Brak opinii'
+

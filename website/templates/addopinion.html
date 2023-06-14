@@ -6,16 +6,30 @@ Please acknowledge the original authors if you use or modify this code.
 {% extends "base.html" %} {% block title %}Dodaj opinie{% endblock %} {% block content %}
 <head>
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        .button {
+        background-color: #026773;
+        border: none;
+        color: #ffffff;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        margin: -15px 2px;
+        cursor: pointer;
+        border-radius: 16px;
+    }
+    </style>
 </head>
 <body>
-    <h1 style="color: #024959">Dodaj opinie</h1>
+    <h1 style="color: #024959">Dodaj opinie o kierunku {{ course_name }} na uczelni {{ university_name }}</h1>
 
     <form id="add_rating" method="post" data-university-name="{{ university_name }}" data-course-id="{{ course_id }}">
-        <label for="review">Opinia:</label><br>
+        <label for="review" style = "color: #026773;">Opinia:</label><br>
         <textarea id="review" name="review" rows="4" cols="50"></textarea><br><br>
 
-        <label for="difficulty">Trudność:</label>
-        <select id="difficulty" name="difficulty">
+        <label for="difficulty" style = "color: #026773;">Trudność:</label>
+        <select id="difficulty" name="difficulty" class = button>
             <option value="1">1 - bardzo łatwe</option>
             <option value="2">2 - łatwe</option>
             <option value="3">3 - średnie</option>
@@ -23,8 +37,8 @@ Please acknowledge the original authors if you use or modify this code.
             <option value="5">5 - bardzo trudne</option>
         </select><br><br>
 
-        <label for="quality">Jakość nauczania:</label>
-        <select id="quality" name="quality">
+        <label for="quality" style = "color: #026773;">Jakość nauczania:</label>
+        <select id="quality" name="quality" class = button>
             <option value="1">1 - bardzo zła</option>
             <option value="2">2 - zła</option>
             <option value="3">3 - przeciętna</option>
@@ -32,7 +46,7 @@ Please acknowledge the original authors if you use or modify this code.
             <option value="5">5 - fantastyczna</option>
         </select><br><br>
         
-        <input type="submit" value="Dodaj opinię" name="submit-button" id="submit-button">
+        <input type="submit" class = button value="Dodaj opinię" name="submit-button" id="submit-button" style = "font-size: 30px">
         
     </form>
 
@@ -40,7 +54,7 @@ Please acknowledge the original authors if you use or modify this code.
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript">
       $(document).ready(function () {
-  
+
         $("#submit-button").on("click", function () {
           event.preventDefault();
           var form = $("#add_rating");
@@ -79,7 +93,7 @@ Please acknowledge the original authors if you use or modify this code.
                }
     });
           }
-        });    
+        });
       });
     </script>
    <link href="/static/style.css" rel="stylesheet"  />
