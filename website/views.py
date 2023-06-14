@@ -1,3 +1,8 @@
+"""
+This file is a part of the University Review System project.
+https://github.com/miloszwielgus/university-review-system
+Please acknowledge the original authors if you use or modify this code.
+"""
 from flask import Blueprint, render_template,request,flash,jsonify,url_for,redirect, session
 from flask_login import login_required,  current_user
 from .models import * 
@@ -13,6 +18,12 @@ views = Blueprint('views',__name__)
 global_auth_object = None
 
 def get_auth_object(base_url):
+    """
+    Retrieves or creates a global authentication object for the given base URL.
+
+    Returns:
+        usosapi.USOSAPIConnection: The authentication object.
+    """
     global global_auth_object
 
     if global_auth_object is None:
@@ -22,6 +33,12 @@ def get_auth_object(base_url):
 
 @views.route('/')
 def index():
+    """
+    Renders the home page of the University Review System.
+
+    Returns:
+        str: Rendered HTML content.
+    """
 
     class_entry_relations = get_university_values()
     all_courses = get_course_values()                  
@@ -40,6 +57,12 @@ def index():
 @views.route('/_update_university_dropdown')
 @cross_origin()
 def update_university_dropdown():
+    """
+    Updates the university dropdown list based on the selected city.
+
+    Returns:
+        str: HTML content of the updated university dropdown list.
+    """
     
     selected_city = json.loads(request.args.get('selected_city'))
     html_string_selected = ''
@@ -53,6 +76,12 @@ def update_university_dropdown():
 @views.route('/_update_course_dropdown')
 @cross_origin()
 def update_course_dropdown():
+    """
+    Updates the course dropdown list based on the selected university.
+
+    Returns:
+        str: HTML content of the updated course dropdown list.
+    """
     
     selected_university = json.loads(request.args.get('selected_university'))
     
@@ -68,6 +97,12 @@ def update_course_dropdown():
 
 @views.route('/_update_course_list',methods=['GET','POST'])
 def update_course_list():
+    """
+    Updates the course list based on the selected city, university, and course.
+
+    Returns:
+        str: HTML content of the updated course list.
+    """
     selected_city = json.loads(request.args.get('selected_city'))
     selected_university = json.loads(request.args.get('selected_university'))
     selected_course = json.loads(request.args.get('selected_course')) 
@@ -128,6 +163,12 @@ def update_course_list():
 
 @views.route('/university/<string:university_name>/course/<int:course_id>')
 def course(university_name,course_id):
+    """
+    Renders the course page with detailed information about the selected course.
+
+    Returns:
+        str: Rendered HTML content.
+    """
     ratings = Rating.query.filter_by(course_id=course_id).all()
     course = Course.query.filter_by(course_id = course_id).first()
     university_name = University.query.filter_by(university_id =course.university_id).first().university_name 
@@ -145,6 +186,12 @@ def course(university_name,course_id):
 
 @views.route('/university/<string:university_name>')
 def university(university_name):
+    """
+    Renders the university page with detailed information about the selected university.
+
+    Returns:
+        str: Rendered HTML content.
+    """
     courses = Course.query.filter_by(university_id=University.query.filter_by(university_name=university_name).first().university_id)
     website = University.query.filter_by(university_name=university_name).first().website
     if university:
@@ -159,10 +206,19 @@ def university(university_name):
 
 @views.route('/style.css')
 def style():
+    """
+    Serves the CSS file for the University Review System.
+    """
     return views.send_static_file('style.css')
 
 @views.route('/university_list')
 def uni_list():
+    """
+    Renders a list of universities for the logged-in user.
+
+    Returns:
+        str: Rendered HTML content.
+    """
     universities = University.query.all()
     cities = [university.location for university in universities]
     user=current_user
@@ -170,6 +226,12 @@ def uni_list():
 
 @views.route('/_update_university_list', methods=['GET'])
 def update_university_list():
+    """
+    Updates the list of universities based on the selected city.
+
+    Returns:
+        json: JSON response containing the updated HTML content.
+    """
     selected_city = json.loads(request.args.get('selected_city'))
     universities = University.query.filter(University.location.in_(selected_city)).all()
     
@@ -191,11 +253,23 @@ def update_university_list():
 
 @views.route('/compare')
 def compare():  
+    """
+    Displays a comparison page for courses.
+
+    Returns:
+        str: Rendered HTML content.
+    """
     universities = University.query.all()
     return render_template('compare_courses.html', universities=universities, user=current_user)
 
 @views.route('/get_courses')
 def get_courses():
+    """
+    Retrieves courses for a specific university.
+
+    Returns:
+        json: JSON response containing the course data.
+    """
     university_id = request.args.get('universityId')
     courses = Course.query.filter_by(university_id=university_id).all()
     courses_data = []
@@ -213,6 +287,12 @@ def get_courses():
 
 @views.route('/compare_courses')
 def compare_courses():
+    """
+    Compares courses based on the selected universities and courses.
+
+    Returns:
+        str: Rendered HTML content.
+    """
     university1CourseId = request.args.get('university1CourseId')
     university2CourseId = request.args.get('university2CourseId')
     course1 = Course.query.get(university1CourseId)
@@ -246,7 +326,12 @@ def compare_courses():
 
 @views.route('/top_universities')
 def top_universities():
-    
+    """
+    Displays the top universities based on average ratings.
+
+    Returns:
+        str: Rendered HTML content.
+    """
     universities = University.query.all()
     universities_avg_rating = []
     for university in universities:
@@ -269,6 +354,12 @@ def top_universities():
 
 @views.route('/university/<string:university_name>/course/<int:course_id>/add-opinion',methods=['POST','GET'])
 def add_opinion_page(course_id,university_name):
+    """
+    Renders the page for adding an opinion for a specific course.
+
+    Returns:
+        str: Rendered HTML content.
+    """
     if(not current_user.is_authenticated):
                 return render_template('login.html',user=current_user) 
     if(Rating.query.filter(Rating.course_id == course_id,Rating.username == current_user.username).first()):
@@ -278,6 +369,12 @@ def add_opinion_page(course_id,university_name):
 
 @views.route('/university/<string:university_name>/course/<int:course_id>/add-opinion/verify_review')
 def verify_review(course_id,university_name): 
+    """
+    Renders the page for verifying the review.
+
+    Returns:
+        str: Rendered HTML content.
+    """
     base_url = University.query.filter_by(university_name=university_name).first().api_url
     auth_object = get_auth_object(base_url)
     auth_object._generate_request_token() 
@@ -287,42 +384,54 @@ def verify_review(course_id,university_name):
 
 @views.route('/_process_pin',methods=['POST'])
 def process_pin(): 
-        pin = request.form.get('pin_input') 
-        course_id = request.form.get('course_id') 
-        university_name = request.form.get('university_name')
-        auth_object = get_auth_object('base_url')
-        auth_object.authorize_with_pin(pin) 
-        curr = auth_object.get('services/progs/student',active_only='false',old_programs='false')
-        json_string = json.dumps(curr)
-        course_code = json.loads(json_string)
-        course_code = course_code[0]['programme']['id']
-        if course_code == Course.query.filter_by(course_id=course_id).first().code:
-             rating = Rating.query.filter(Rating.course_id == course_id, Rating.username == current_user.username).first()
-             print(rating.is_verified)
-             rating.is_verified = 1
-             db.session.commit()
-        response = url_for('views.course',course_id=course_id,university_name=university_name)
-        return response
+    """
+    Processes the PIN for verifying the review.
+
+    Returns:
+        str: Response URL.
+    """
+    pin = request.form.get('pin_input') 
+    course_id = request.form.get('course_id') 
+    university_name = request.form.get('university_name')
+    auth_object = get_auth_object('base_url')
+    auth_object.authorize_with_pin(pin) 
+    curr = auth_object.get('services/progs/student',active_only='false',old_programs='false')
+    json_string = json.dumps(curr)
+    course_code = json.loads(json_string)
+    course_code = course_code[0]['programme']['id']
+    if course_code == Course.query.filter_by(course_id=course_id).first().code:
+            rating = Rating.query.filter(Rating.course_id == course_id, Rating.username == current_user.username).first()
+            print(rating.is_verified)
+            rating.is_verified = 1
+            db.session.commit()
+    response = url_for('views.course',course_id=course_id,university_name=university_name)
+    return response
 
 @views.route('/_add_opinion',methods=['POST'])
 def add_opinion():
-        if request.method == 'POST':
-            if(not current_user.is_authenticated):
-                return render_template('login.html',user=current_user) 
-            university_name=request.form.get('university_name')
-            course_id=request.form.get('course_id') 
-            review=request.form.get('review')
-            difficulty_value=request.form.get('difficulty_value')
-            quality_value=request.form.get('quality_value')
-            new_rating = Rating(username=current_user.username, course_id=course_id,quality_value=quality_value,difficulty_value=difficulty_value,rating_description = review,is_verified = 0)  
-            db.session.add(new_rating) 
-            db.session.commit() 
-            api_url = University.query.filter_by(university_name=university_name).first().api_url 
-            course_url = url_for('views.course',university_name=university_name,course_id=course_id)
-            if api_url:
-             redirection_url = url_for('views.verify_review',course_id=course_id,university_name=university_name)
-             return redirection_url
-            else:
-                 return course_url
+    """
+    Adds an opinion for a course.
+
+    Returns:
+        str: Redirect URL.
+    """
+    if request.method == 'POST':
+        if(not current_user.is_authenticated):
+            return render_template('login.html',user=current_user) 
+        university_name=request.form.get('university_name')
+        course_id=request.form.get('course_id') 
+        review=request.form.get('review')
+        difficulty_value=request.form.get('difficulty_value')
+        quality_value=request.form.get('quality_value')
+        new_rating = Rating(username=current_user.username, course_id=course_id,quality_value=quality_value,difficulty_value=difficulty_value,rating_description = review,is_verified = 0)  
+        db.session.add(new_rating) 
+        db.session.commit() 
+        api_url = University.query.filter_by(university_name=university_name).first().api_url 
+        course_url = url_for('views.course',university_name=university_name,course_id=course_id)
+        if api_url:
+            redirection_url = url_for('views.verify_review',course_id=course_id,university_name=university_name)
+            return redirection_url
+        else:
+                return course_url
 
 

@@ -1,3 +1,9 @@
+"""
+    Creates the database if it doesn't exist.
+
+    Args:
+        app (Flask): The Flask application instance.
+    """
 from flask_admin.contrib.sqla import ModelView
 from flask import session, redirect, url_for, request 
 from flask_login import current_user 

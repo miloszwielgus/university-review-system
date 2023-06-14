@@ -1,3 +1,8 @@
+"""
+This file is a part of the University Review System project.
+https://github.com/miloszwielgus/university-review-system
+Please acknowledge the original authors if you use or modify this code.
+"""
 from . import db
 from .models import University,Course,Rating
 import smtplib
@@ -5,46 +10,59 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 def get_university_values():
+    """
+    Retrieves and organizes university values from the database.
 
-    universities = University.query.all() 
-    myDict = {} 
-    for p in universities:
-        key = p.location
-        q = University.query.filter_by(location=key).all()
-        lst_c = []
-        for c in q:
-            lst_c.append( c.university_name )
-        myDict[key] = lst_c
-    
-    class_entry_relations = myDict
-                        
-    return class_entry_relations 
-
-def get_course_values():
+    Returns:
+    A dictionary containing university locations as keys and a list of associated university names as values.
+    """
 
     universities = University.query.all()
-    
-    myDict = {} 
-    for p in universities:
-    
-        key = p.university_id
-        
-        q = Course.query.filter_by(university_id=key).all()
-    
-        
-        lst_c = []
-        for c in q:
-            lst_c.append( c.course_name)
-        myDict[p.university_name] = lst_c
-    
-    class_entry_relations = myDict
-                        
-    return class_entry_relations 
+    university_dict = {}
+
+    for university in universities:
+        location = university.location
+        universities_at_location = University.query.filter_by(location=location).all()
+        university_names = []
+
+        for uni in universities_at_location:
+            university_names.append(uni.university_name)
+
+        university_dict[location] = university_names
+
+    return university_dict
+
+def get_course_values():
+    """
+    Retrieves and organizes course values from the database.
+
+    Returns:
+    A dictionary containing university names as keys and a list of associated course names as values.
+    """
+    universities = University.query.all()
+    course_dict = {}
+
+    for university in universities:
+        university_id = university.university_id
+        courses = Course.query.filter_by(university_id=university_id).all()
+        course_names = []
+
+        for course in courses:
+            course_names.append(course.course_name)
+
+        course_dict[university.university_name] = course_names
+
+    return course_dict
 
 
 
 def send_email(sender_email, sender_password, recipient_email, subject, message):
-    smtp_server = "smtp.poczta.onet.pl" #tu podajemy adres serwera smtp poczty wysylajacego, adresy innych domen tutaj: https://www.blulink.pl/serwery-poczty-smtp,-pop3,-imap,125.html
+    """
+    Sends an email using the provided sender and recipient email addresses,
+    along with the subject and message.
+
+    """
+    smtp_server = "smtp.poczta.onet.pl" #other domain addresses can be found here: https://www.blulink.pl/serwery-poczty-smtp,-pop3,-imap,125.html
     smtp_port = 587
     msg = MIMEMultipart()
     msg["From"] = sender_email
@@ -66,6 +84,12 @@ def send_email(sender_email, sender_password, recipient_email, subject, message)
 
 
 def calculate_average_quality_value(course):
+    """
+    Calculates the average quality value for a given course based on its ratings.
+
+    Returns:
+    float: The average quality value for the course.
+    """
     ratings = course.rating  
     total_ratings = len(ratings)
     if total_ratings == 0:
@@ -77,6 +101,13 @@ def calculate_average_quality_value(course):
 
 
 def calculate_average_difficulty_value(course):
+    """
+    Calculates the average difficulty value for a given course based on its ratings.
+
+    Returns:
+    float: The average difficulty value for the course.
+    """
+    
     ratings = course.rating  
     total_ratings = len(ratings)
 
@@ -89,6 +120,13 @@ def calculate_average_difficulty_value(course):
     return average_difficulty_value
 
 def calculate_average_rating(course):
+    """
+    Calculates the average rating for a given course based on its ratings.
+
+    Returns:
+    float or str: The average rating for the course, rounded to two decimal places,
+                 or 'Brak opinii' (No reviews) if there are no ratings.
+    """
     ratings = Rating.query.filter_by(course_id=course.course_id).all()
     if ratings:
         total_ratings = len(ratings)

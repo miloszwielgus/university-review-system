@@ -1,3 +1,12 @@
+"""
+    Retrieves the student's program information from the specified university's API.
+
+    Args:
+        university_name (str): The name of the university.
+
+    Returns:
+        str: JSON representation of the student's program information.
+    """
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import path
@@ -11,6 +20,12 @@ DB_NAME = "unidatabase.db"
 
 
 def create_app():
+    """
+    Creates and configures the Flask application.
+
+    Returns:
+        Flask: The configured Flask application.
+    """
     app = Flask(__name__, static_folder='static')
     CORS(app)
     app.config['SECRET_KEY'] = '3489qwako23i3nnASp'
@@ -46,6 +61,12 @@ def create_app():
 
 
 def create_database(app):
+    """
+    Creates the database if it doesn't exist.
+
+    Args:
+        app (Flask): The Flask application instance.
+    """
     if not path.exists('website/' + DB_NAME):
         with app.app_context():
             db.create_all()
