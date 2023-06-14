@@ -1,14 +1,6 @@
 import pytest
-#from __init__py import create_app, db
 from .. import *
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
-import chromedriver_binary
-import time
-import multiprocessing
+
 
 @pytest.fixture
 def selenium_driver():
@@ -98,11 +90,12 @@ def test_compare_page_loading(client):
 def test_compare_page_includes_tags(tag, client):
         check_page_includes_tags(tag, client, '/top_universities')
 
-'''
+
 def test_get_courses(client):
     response = client.get("/get_courses?universityId=Uniwersytet%20Jagielloński%20w%20Krakowie")
     assert response.status_code == 200
-    assert response.json == ""
+    #print(response.json))
+
 
 def test_home_page_city_selection(client):
     #TODO
@@ -112,4 +105,4 @@ def test_university_listing(client):
     #response = client.get('/_update_university_list')
     #assert response.status_code == 200
     #assert response.text == ""
-    pass'''
+    pass
