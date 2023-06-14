@@ -1,5 +1,6 @@
 #!/usr/bin/bash
 
+
 echo "Changing to home directory..."
 pushd "$HOME"
 

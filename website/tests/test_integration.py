@@ -10,6 +10,7 @@ import chromedriver_binary
 import time
 import multiprocessing
 
+
 @pytest.fixture
 def selenium_driver():
     # First install selenium on WSL using `install_selenium.sh`
