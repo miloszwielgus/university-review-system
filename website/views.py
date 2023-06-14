@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template,request,flash,jsonify,url_for,redirect, session
 from flask_login import login_required,  current_user
-#from . import db
 from .models import * 
 import redis
 import json
@@ -17,7 +16,7 @@ def get_auth_object(base_url):
     global global_auth_object
 
     if global_auth_object is None:
-        # If auth_object is not set, create a new instance
+        
          global_auth_object=usosapi.USOSAPIConnection(base_url,"4ACHmqpSV88bw7fZJANQ","XNeZCccybLfteDAxBYcFe89q4pvsuXgvL5Ah8sH4")
     return global_auth_object
 
@@ -41,37 +40,28 @@ def index():
 @views.route('/_update_university_dropdown')
 @cross_origin()
 def update_university_dropdown():
-    # the value of the first dropdown (selected by the user)
+    
     selected_city = json.loads(request.args.get('selected_city'))
-    # get values for the second dropdown
     html_string_selected = ''
     for city in selected_city:
        updated_values = get_university_values()[city]
        for entry in updated_values:
             html_string_selected += '<option value="{}">{}</option>'.format(entry, entry)
-    # create the valuesn in the dropdown as a html string
-    
-
-    
-    #print('html_string_selected:', html_string_selected)
 
     return jsonify(html_string_selected=html_string_selected)
 
 @views.route('/_update_course_dropdown')
 @cross_origin()
 def update_course_dropdown():
-    # the value of the first dropdown (selected by the user)
+    
     selected_university = json.loads(request.args.get('selected_university'))
     
     html_string_selected = ''
-    # get values for the second dropdown
+    
     for university in selected_university:
         updated_values = get_course_values()[university]
         for entry in updated_values:
             html_string_selected += '<option value="{}">{}</option>'.format(entry, entry)
-    # create the valuesn in the dropdown as a html string
-
-    #print('html_string_selected:', html_string_selected)
 
     return jsonify(html_string_selected=html_string_selected)
 
@@ -81,8 +71,7 @@ def update_course_list():
     selected_city = json.loads(request.args.get('selected_city'))
     selected_university = json.loads(request.args.get('selected_university'))
     selected_course = json.loads(request.args.get('selected_course')) 
-    universities = University.query.filter(University.university_name.in_(selected_university)).all() 
-    
+    universities = University.query.filter(University.university_name.in_(selected_university)).all()   
     university_ids = []
     for uni in universities: 
          university_ids.append(uni.university_id)
@@ -172,8 +161,6 @@ def university(university_name):
 def style():
     return views.send_static_file('style.css')
 
-
-
 @views.route('/university_list')
 def uni_list():
     universities = University.query.all()
@@ -203,8 +190,7 @@ def update_university_list():
 
 
 @views.route('/compare')
-def compare():
-    # Fetch universities from the database and pass them to the template
+def compare():  
     universities = University.query.all()
     return render_template('compare_courses.html', universities=universities, user=current_user)
 
@@ -229,20 +215,13 @@ def get_courses():
 def compare_courses():
     university1CourseId = request.args.get('university1CourseId')
     university2CourseId = request.args.get('university2CourseId')
-
-    # Retrieve the course information from the database
     course1 = Course.query.get(university1CourseId)
     course2 = Course.query.get(university2CourseId)
-
-    # Retrieve the university information from the database
     university1 = University.query.get(course1.university_id)
     university2 = University.query.get(course2.university_id)
-
-    # Calculate average ratings
     avg_rating1 = calculate_average_rating(course1)
     avg_rating2 = calculate_average_rating(course2)
 
-    # Prepare the data to be returned as JSON
     data = {
         'course1_name': course1.course_name,
         'course2_name': course2.course_name,
@@ -267,10 +246,8 @@ def compare_courses():
 
 @views.route('/top_universities')
 def top_universities():
-    # Fetch all universities from the database
+    
     universities = University.query.all()
-
-    # Calculate the average rating for each university's courses and sort by average rating
     universities_avg_rating = []
     for university in universities:
         courses = Course.query.filter_by(university_id=university.university_id).all()
@@ -278,15 +255,13 @@ def top_universities():
         course_count = 0
         for course in courses:
             for rating in course.rating:
-                total_rating += rating.quality_value  # Assuming the rating value is stored in the quality_value attribute
+                total_rating += rating.quality_value  
                 course_count += 1
         avg_rating = total_rating / course_count if course_count > 0 else 0
-        universities_avg_rating.append((university, avg_rating))
+        universities_avg_rating.append((university, round(avg_rating,2)))
 
-    # Sort universities by average rating in descending order
+    
     universities_avg_rating.sort(key=lambda x: x[1], reverse=True)
-
-    # Get the top 5 universities
     top_universities = universities_avg_rating[:5]
 
     return render_template('top_universities.html', universities=top_universities, user=current_user)
@@ -339,13 +314,12 @@ def add_opinion():
             review=request.form.get('review')
             difficulty_value=request.form.get('difficulty_value')
             quality_value=request.form.get('quality_value')
-            new_rating = Rating(username=current_user.username, course_id=course_id,quality_value=quality_value,difficulty_value=difficulty_value,rating_description = review,is_verified = 0)  #providing the schema for the note 
-            db.session.add(new_rating) #adding the rating to the database 
+            new_rating = Rating(username=current_user.username, course_id=course_id,quality_value=quality_value,difficulty_value=difficulty_value,rating_description = review,is_verified = 0)  
+            db.session.add(new_rating) 
             db.session.commit() 
             api_url = University.query.filter_by(university_name=university_name).first().api_url 
             course_url = url_for('views.course',university_name=university_name,course_id=course_id)
             if api_url:
-             
              redirection_url = url_for('views.verify_review',course_id=course_id,university_name=university_name)
              return redirection_url
             else:
