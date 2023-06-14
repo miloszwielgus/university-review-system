@@ -6,11 +6,9 @@ Please acknowledge the original authors if you use or modify this code.
 from flask import Blueprint, render_template,request,flash,jsonify,url_for,redirect, session
 from flask_login import login_required,  current_user
 from .models import * 
-import redis
 import json
 from flask_cors import cross_origin 
 from .functions import *
-from sqlalchemy import select 
 from . import usosapi
 from .functions import calculate_average_difficulty_value, calculate_average_quality_value, calculate_average_rating
 views = Blueprint('views',__name__)
