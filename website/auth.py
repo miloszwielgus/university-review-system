@@ -125,8 +125,8 @@ def add_opinion():
 @auth.route("/send_question", methods=["POST"])
 def send_question():
     # Get form data
-    sender_email = "testa@onet.pl"  # Tu podaj swój adres email
-    sender_password = "Dorotazlimanowej1!"  # Tu podaj hasło do swojego konta email
+    sender_email = "max11@spoko.pl"  # Tu podaj swój adres email
+    sender_password = "hotdogi2011"  # Tu podaj hasło do swojego konta email
     recipient_email = "izka.golec@gmail.com"  # Adres e-mail odbiorcy (zmieniony na izka.golec@gmail.com)
     subject = "Pytanie od: " + request.form["email"]
     message = request.form["question"]
