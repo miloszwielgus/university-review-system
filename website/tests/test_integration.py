@@ -9,6 +9,9 @@ from selenium.webdriver.chrome.options import Options
 import chromedriver_binary
 import time
 import multiprocessing
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.common.keys import Keys
+
 
 
 @pytest.fixture
@@ -42,7 +45,7 @@ def flask_server(app):
     # Terminate the Flask app process
     flask_process.terminate()
 
-def test_list_courses_button(selenium_driver, flask_server):
+def test_empty_list_courses_button(selenium_driver, flask_server):
     # Open the website
     selenium_driver.get('http://127.0.0.1:5000')
 
@@ -52,8 +55,38 @@ def test_list_courses_button(selenium_driver, flask_server):
     # Click the button
     button.click()
 
-    #TODO
-    # check html
+    # Find the <div> element with ID 'course_list' and retrieve its inner HTML
+    course_list_element = selenium_driver.find_element(By.ID, 'course_list')
+    html_for_course_list = course_list_element.get_attribute('innerHTML')
+
+    assert html_for_course_list == ""
+
+def test_list_courses_button(selenium_driver, flask_server):
+    # Open the website
+    selenium_driver.get('http://127.0.0.1:5000')
+
+    # Find the option element corresponding to 'Bydgoszcz' and click it
+    WebDriverWait(selenium_driver, 30).until(
+    expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".select2-container .select2-selection")))
+    selenium_driver.find_element(By.CSS_SELECTOR, ".select2-container .select2-selection").click()
+    selenium_driver.find_element(By.XPATH, "//li[contains(text(), 'Bydgoszcz')]").click()
+    selenium_driver.find_element(By.ID, "process_input").click()
+
+    # Find the <div> element with ID 'course_list' and retrieve its inner HTML
+    course_list_element = selenium_driver.find_element(By.ID, 'course_list')
+    html_for_course_list = course_list_element.text
+
+    assert html_for_course_list == (
+         'Administracja\n'
+         'Uniwersytet Kazimierza Wielkiego w Bydgoszczy\n'
+         'Tytuł: licencjat (6 semestrów)\n'
+         'Typ: I stopnia\n'
+
+         'Biologia\n'
+         'Uniwersytet Kazimierza Wielkiego w Bydgoszczy\n'
+         'Tytuł: licencjat\n'
+         'Typ: I stopnia'
+    )
 
     # Close the WebDriver
     selenium_driver.quit()
